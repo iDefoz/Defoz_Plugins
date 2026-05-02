@@ -1,6 +1,5 @@
 // Defoz Stream Plugin
 // Author: Defoz
-// Optimized & Cleaned
 
 (function () {
     'use strict';
@@ -226,10 +225,10 @@
     function proxy(name) {
       var ip = getMyIp() || '';
       var param_ip = Lampa.Storage.field('my_home_sources_proxy_find_ip') === true ? 'ip' + ip + '/' : '';
-      var proxy1 = new Date().getHours() % 2 ? 'https://cors.nb557.workers.dev/' : 'https://cors.fx666.workers.dev/';
-      var proxy2_base = 'https://apn-latest.onrender.com/';
+      var proxy1 = 'https://falling-waterfall-de57.defoz-info.workers.dev/';
+      var proxy2_base = 'https://falling-waterfall-de57.defoz-info.workers.dev/';
       var proxy2 = proxy2_base + (param_ip ? '' : 'ip/');
-      var proxy3 = 'https://cors557.deno.dev/';
+      var proxy3 = 'https://falling-waterfall-de57.defoz-info.workers.dev/';
       var proxy_secret = '';
       var proxy_secret_ip = '';
 
@@ -6625,7 +6624,7 @@ function kodik(component, _object) {
 
       Lampa.Lang.add({
         my_home_sources_watch: {
-          ru: 'Смотреть Онлайн (Defoz)',
+          ru: 'Defoz Stream (Смотреть)',
           uk: 'Дивитися онлайн',
           be: 'Глядзець анлайн',
           en: 'Watch online',
