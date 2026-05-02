@@ -4047,7 +4047,7 @@ function anilibria(component, _object) {
       var object = _object;
       var select_title = '';
       var prox = component.proxy('anilibria');
-      var embed = 'https://api.anilibria.tv/v3/';
+      var embed = 'https://api.anilibria.top/v3/';
       var filter_items = {};
       var choice = {
         season: 0,
@@ -6173,7 +6173,7 @@ function kodik(component, _object) {
         filter_items.source = obj_filter_sources.map(function (s) {
           return s.title;
         });
-        add('source', Lampa.Lang.translate('my_home_sources_balanser'));
+        // Балансер убран из фильтра по просьбе пользователя
         if (filter_items.voice && filter_items.voice.length) add('voice', Lampa.Lang.translate('torrent_parser_voice'));
         if (filter_items.season && filter_items.season.length) add('season', Lampa.Lang.translate('torrent_serial_season'));
         if (filter_items.server && filter_items.server.length) add('server', Lampa.Lang.translate('my_home_sources_server'));
@@ -6625,7 +6625,7 @@ function kodik(component, _object) {
 
       Lampa.Lang.add({
         my_home_sources_watch: {
-          ru: 'Смотреть онлайн',
+          ru: 'Смотреть Онлайн (Defoz)',
           uk: 'Дивитися онлайн',
           be: 'Глядзець анлайн',
           en: 'Watch online',
@@ -6674,7 +6674,7 @@ function kodik(component, _object) {
           zh: '您需要通过验证码。 尝试使用镜子而不是代理'
         },
         my_home_sources_balanser: {
-          ru: 'Балансер',
+          ru: 'Обход блокировки для',
           uk: 'Балансер',
           be: 'Балансер',
           en: 'Balancer',
@@ -7195,8 +7195,8 @@ function kodik(component, _object) {
       var manifest = {
         type: 'video',
         version: mod_version,
-        name: Lampa.Lang.translate('my_home_sources_title_full') + ' - ' + mod_version,
-        description: Lampa.Lang.translate('my_home_sources_watch'),
+        name: 'Defoz Stream - ' + mod_version,
+        description: 'Мощный агрегатор онлайн-балансеров (Alloha, Rezka, Kodik, Filmix)',
         component: 'my_home_sources',
         onContextMenu: function onContextMenu(object) {
           return {
@@ -7868,7 +7868,7 @@ function kodik(component, _object) {
 
     function addSettingsOnlineMod() {
       if (Lampa.Settings.main && Lampa.Settings.main() && !Lampa.Settings.main().render().find('[data-component="my_home_sources"]').length) {
-        var field = $(Lampa.Lang.translate("<div class=\"settings-folder selector\" data-component=\"my_home_sources\">\n            <div class=\"settings-folder__icon\">\n                <svg height=\"260\" viewBox=\"0 0 244 260\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                <path d=\"M242,88v170H10V88h41l-38,38h37.1l38-38h38.4l-38,38h38.4l38-38h38.3l-38,38H204L242,88L242,88z M228.9,2l8,37.7l0,0 L191.2,10L228.9,2z M160.6,56l-45.8-29.7l38-8.1l45.8,29.7L160.6,56z M84.5,72.1L38.8,42.4l38-8.1l45.8,29.7L84.5,72.1z M10,88 L2,50.2L47.8,80L10,88z\" fill=\"white\"/>\n                </svg>\n            </div>\n            <div class=\"settings-folder__name\">#{my_home_sources_title_full}</div>\n            <div class=\"defoz-badge\">by Defoz v2.2.0 (Premium)</div>\n        </div>"));
+        var field = $(Lampa.Lang.translate("<div class=\"settings-folder selector\" data-component=\"my_home_sources\">\n            <div class=\"settings-folder__icon\">\n                <svg height=\"260\" viewBox=\"0 0 244 260\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                <path d=\"M242,88v170H10V88h41l-38,38h37.1l38-38h38.4l-38,38h38.4l38-38h38.3l-38,38H204L242,88L242,88z M228.9,2l8,37.7l0,0 L191.2,10L228.9,2z M160.6,56l-45.8-29.7l38-8.1l45.8,29.7L160.6,56z M84.5,72.1L38.8,42.4l38-8.1l45.8,29.7L84.5,72.1z M10,88 L2,50.2L47.8,80L10,88z\" fill=\"white\"/>\n                </svg>\n            </div>\n            <div class=\"settings-folder__name\">#{my_home_sources_title_full}</div>\n            <div class=\"defoz-badge\">Defoz Stream v2.2.0 (Premium)</div>\n        </div>"));
         Lampa.Settings.main().render().find('[data-component="more"]').after(field);
         Lampa.Settings.main().update();
       }
