@@ -1,5 +1,6 @@
 // Defoz Stream Plugin
 // Author: Defoz
+// Optimized & Cleaned
 
 (function () {
     'use strict';
@@ -14,12 +15,12 @@
         var style = document.createElement('style');
         style.innerHTML = `
             /* Выделение папки плагина в настройках */
-            .settings-folder[data-component="my_home_sources"] .settings-folder__icon {
+            .settings-folder[data-component="defoz_stream_pro_v2"] .settings-folder__icon {
                 background: linear-gradient(135deg, #FF0055 0%, #7B00FF 100%) !important;
                 box-shadow: 0 4px 15px rgba(255, 0, 85, 0.4);
                 border-radius: 12px;
             }
-            .settings-folder[data-component="my_home_sources"] .settings-folder__name {
+            .settings-folder[data-component="defoz_stream_pro_v2"] .settings-folder__name {
                 font-weight: bold;
                 background: -webkit-linear-gradient(0deg, #FF0055, #a341ff);
                 -webkit-background-clip: text;
@@ -87,7 +88,7 @@
 
     function decodeSecret(input, password) {
       var result = '';
-      password = (password || Lampa.Storage.get('my_home_sources_secret_password', '')) + '';
+      password = (password || Lampa.Storage.get('defoz_stream_pro_v2_secret_password', '')) + '';
 
       if (input && password) {
         var hash = salt('123456789' + password);
@@ -134,7 +135,7 @@
     }
 
     function rezka2Mirror() {
-      var url = Lampa.Storage.get('my_home_sources_rezka2_mirror', '') + '';
+      var url = Lampa.Storage.get('defoz_stream_pro_v2_rezka2_mirror', '') + '';
       if (!url) return 'https://kvk.zone';
       if (url.indexOf('://') == -1) url = 'https://' + url;
       if (url.charAt(url.length - 1) === '/') url = url.substring(0, url.length - 1);
@@ -142,7 +143,7 @@
     }
 
     function kinobaseMirror() {
-      var url = Lampa.Storage.get('my_home_sources_kinobase_mirror', '') + '';
+      var url = Lampa.Storage.get('defoz_stream_pro_v2_kinobase_mirror', '') + '';
       if (!url) return 'https://kinobase.org';
       if (url.indexOf('://') == -1) url = 'https://' + url;
       if (url.charAt(url.length - 1) === '/') url = url.substring(0, url.length - 1);
@@ -224,8 +225,8 @@
 
     function proxy(name) {
       var ip = getMyIp() || '';
-      var param_ip = Lampa.Storage.field('my_home_sources_proxy_find_ip') === true ? 'ip' + ip + '/' : '';
-      var proxy1 = 'https://falling-waterfall-de57.defoz-info.workers.dev/';
+      var param_ip = Lampa.Storage.field('defoz_stream_pro_v2_proxy_find_ip') === true ? 'ip' + ip + '/' : '';
+      var proxy1 = 'https://falling-waterfall-de57.defoz-info.workers.dev/?url=';
       var proxy2_base = 'https://falling-waterfall-de57.defoz-info.workers.dev/';
       var proxy2 = proxy2_base + (param_ip ? '' : 'ip/');
       var proxy3 = 'https://falling-waterfall-de57.defoz-info.workers.dev/';
@@ -237,8 +238,8 @@
         proxy_secret_ip = proxy_secret + (param_ip || 'ip/');
       }
 
-      var proxy_other = Lampa.Storage.field('my_home_sources_proxy_other') === true;
-      var proxy_other_url = proxy_other ? Lampa.Storage.field('my_home_sources_proxy_other_url') + '' : '';
+      var proxy_other = Lampa.Storage.field('defoz_stream_pro_v2_proxy_other') === true;
+      var proxy_other_url = proxy_other ? Lampa.Storage.field('defoz_stream_pro_v2_proxy_other_url') + '' : '';
       var user_proxy1 = (proxy_other_url || proxy1) + param_ip;
       var user_proxy2 = (proxy_other_url || proxy2) + param_ip;
       var user_proxy3 = (proxy_other_url || proxy3) + param_ip;
@@ -252,7 +253,7 @@
       if (name === 'cookie3') return user_proxy3;
       if (name === 'ip') return proxy2_base;
 
-      if (Lampa.Storage.field('my_home_sources_proxy_' + name) === true) {
+      if (Lampa.Storage.field('defoz_stream_pro_v2_proxy_' + name) === true) {
         if (name === 'iframe') return user_proxy2;
         if (name === 'lumex') return proxy_secret;
         if (name === 'rezka') return user_proxy2;
@@ -285,7 +286,7 @@
         protocol: '',
         host: '',
         origin: '',
-        pathname: '',
+        pathname: '★ DEFOZ STREAM PRO ★',
         search: '',
         hash: ''
       };
@@ -361,41 +362,8 @@
 
     function proxyLink(link, proxy, proxy_enc, enc) {
       if (link && proxy) {
-        if (proxy_enc == null) proxy_enc = '';
-        if (enc == null) enc = 'enc';
-
-        if (enc === 'enc') {
-          var pos = link.indexOf('/');
-          if (pos !== -1 && link.charAt(pos + 1) === '/') pos++;
-          var part1 = pos !== -1 ? link.substring(0, pos + 1) : '';
-          var part2 = pos !== -1 ? link.substring(pos + 1) : link;
-          return proxy + 'enc/' + encodeURIComponent(btoa(proxy_enc + part1)) + '/' + part2;
-        }
-
-        if (enc === 'enc1') {
-          var _pos = link.lastIndexOf('/');
-
-          var _part = _pos !== -1 ? link.substring(0, _pos + 1) : '';
-
-          var _part2 = _pos !== -1 ? link.substring(_pos + 1) : link;
-
-          return proxy + 'enc1/' + encodeURIComponent(btoa(proxy_enc + _part)) + '/' + _part2;
-        }
-
-        if (enc === 'enc2' || enc === 'enc2t') {
-          var posEnd = link.lastIndexOf('?');
-          var posStart = link.lastIndexOf('://');
-          if (posEnd === -1 || posEnd <= posStart) posEnd = link.length;
-          if (posStart === -1) posStart = -3;
-          var name = link.substring(posStart + 3, posEnd);
-          posStart = name.lastIndexOf('/');
-          name = posStart !== -1 ? name.substring(posStart + 1) : '';
-          return proxy + 'enc2/' + encodeURIComponent(btoa(proxy_enc + link)) + '/' + name + (enc === 'enc2t' ? "?jacred.test" : '');
-        }
-
-        return proxy + proxy_enc + link;
+        return proxy + (proxy.indexOf('?') === -1 ? '?' : '&') + 'url=' + encodeURIComponent(link);
       }
-
       return link;
     }
 
@@ -633,9 +601,9 @@ function rezka2(component, _object) {
       var extract = {};
       var object = _object;
       var select_title = '';
-      var prefer_http = Lampa.Storage.field('my_home_sources_prefer_http') === true;
-      var prefer_mp4 = Lampa.Storage.field('my_home_sources_prefer_mp4') === true;
-      var proxy_mirror = Lampa.Storage.field('my_home_sources_proxy_rezka2_mirror') === true;
+      var prefer_http = Lampa.Storage.field('defoz_stream_pro_v2_prefer_http') === true;
+      var prefer_mp4 = Lampa.Storage.field('defoz_stream_pro_v2_prefer_mp4') === true;
+      var proxy_mirror = Lampa.Storage.field('defoz_stream_pro_v2_proxy_rezka2_mirror') === true;
       var prox = component.proxy('rezka2');
       var host = prox && !proxy_mirror ? 'https://rezka.ag' : Utils.rezka2Mirror();
       var ref = host + '/';
@@ -654,7 +622,7 @@ function rezka2(component, _object) {
         prox_enc += 'param/User-Agent=' + encodeURIComponent(user_agent) + '/';
       }
 
-      var cookie = Lampa.Storage.get('my_home_sources_rezka2_cookie', '') + '';
+      var cookie = Lampa.Storage.get('defoz_stream_pro_v2_rezka2_cookie', '') + '';
       if (cookie.indexOf('PHPSESSID=') == -1) cookie = 'PHPSESSID=' + Utils.randomId(26) + (cookie ? '; ' + cookie : '');
 
       if (cookie) {
@@ -681,7 +649,7 @@ function rezka2(component, _object) {
         var login_form = str.match(/<form id="check-form" class="check-form" method="post" action="\/ajax\/login\/">/);
 
         if (login_form) {
-          error_message = Lampa.Lang.translate('my_home_sources_authorization_required') + ' HDrezka';
+          error_message = Lampa.Lang.translate('defoz_stream_pro_v2_authorization_required') + ' HDrezka';
           return;
         }
 
@@ -695,7 +663,7 @@ function rezka2(component, _object) {
         var verify_form = str.match(/<span>MIRROR<\/span>.*<button type="submit" onclick="\$\.cookie(\([^)]*\))/);
 
         if (verify_form) {
-          error_message = Lampa.Lang.translate('my_home_sources_unsupported_mirror') + ' HDrezka';
+          error_message = Lampa.Lang.translate('defoz_stream_pro_v2_unsupported_mirror') + ' HDrezka';
           return;
         }
 
@@ -924,7 +892,7 @@ function rezka2(component, _object) {
             if (callback) callback(data, have_more, query);
           }, function (a, c) {
             if (prox && a.status == 403 && (!a.responseText || a.responseText.indexOf('<div>105</div>') !== -1)) {
-              Lampa.Storage.set('my_home_sources_proxy_rezka2', 'false');
+              Lampa.Storage.set('defoz_stream_pro_v2_proxy_rezka2', 'false');
             }
 
             if (a.status == 403 && a.responseText) {
@@ -1495,7 +1463,7 @@ function rezka2(component, _object) {
 
           var hash = Lampa.Utils.hash(element.season ? [element.season, element.season > 10 ? ':' : '', element.episode, object.movie.original_title].join('') : object.movie.original_title);
           var view = Lampa.Timeline.view(hash);
-          var item = Lampa.Template.get('my_home_sources', element);
+          var item = Lampa.Template.get('defoz_stream_pro_v2', element);
           var hash_file = Lampa.Utils.hash(element.season ? [element.season, element.season > 10 ? ':' : '', element.episode, object.movie.original_title, filter_items.voice[choice.voice]].join('') : object.movie.original_title + element.title);
           element.timeline = view;
           item.append(Lampa.Timeline.render(view));
@@ -1556,7 +1524,7 @@ function rezka2(component, _object) {
               }
             }, function (error) {
               element.loading = false;
-              Lampa.Noty.show(error || Lampa.Lang.translate(extract.blocked ? 'my_home_sources_blockedlink' : 'my_home_sources_nolink'));
+              Lampa.Noty.show(error || Lampa.Lang.translate(extract.blocked ? 'defoz_stream_pro_v2_blockedlink' : 'defoz_stream_pro_v2_nolink'));
             });
           });
           component.append(item);
@@ -1573,7 +1541,7 @@ function rezka2(component, _object) {
                   quality: element.qualitys
                 });
               }, function (error) {
-                Lampa.Noty.show(error || Lampa.Lang.translate(extract.blocked ? 'my_home_sources_blockedlink' : 'my_home_sources_nolink'));
+                Lampa.Noty.show(error || Lampa.Lang.translate(extract.blocked ? 'defoz_stream_pro_v2_blockedlink' : 'defoz_stream_pro_v2_nolink'));
               });
             }
           });
@@ -1592,9 +1560,9 @@ function rezka2(component, _object) {
       var extract = {};
       var object = _object;
       var select_title = '';
-      var prefer_http = Lampa.Storage.field('my_home_sources_prefer_http') === true; //let prefer_dash  = Lampa.Storage.field('my_home_sources_prefer_dash') === true
+      var prefer_http = Lampa.Storage.field('defoz_stream_pro_v2_prefer_http') === true; //let prefer_dash  = Lampa.Storage.field('defoz_stream_pro_v2_prefer_dash') === true
 
-      var lampa_player = Lampa.Storage.field('my_home_sources_collaps_lampa_player') === true;
+      var lampa_player = Lampa.Storage.field('defoz_stream_pro_v2_collaps_lampa_player') === true;
       var prox = component.proxy('collaps');
       var base = 'api.zenithjs.ws';
       var host = 'https://' + base;
@@ -1878,7 +1846,7 @@ function rezka2(component, _object) {
         items.forEach(function (element) {
           var hash = Lampa.Utils.hash(element.season ? [element.season, element.season > 10 ? ':' : '', element.episode, object.movie.original_title].join('') : object.movie.original_title);
           var view = Lampa.Timeline.view(hash);
-          var item = Lampa.Template.get('my_home_sources', element);
+          var item = Lampa.Template.get('defoz_stream_pro_v2', element);
           var hash_file = Lampa.Utils.hash(element.season ? [element.season, element.season > 10 ? ':' : '', element.episode, object.movie.original_title, element.title].join('') : object.movie.original_title + 'collaps');
           element.timeline = view;
           item.append(Lampa.Timeline.render(view));
@@ -1931,7 +1899,7 @@ function rezka2(component, _object) {
                 item.append('<div class="torrent-item__viewed">' + Lampa.Template.get('icon_star', {}, true) + '</div>');
                 Lampa.Storage.set('online_view', viewed);
               }
-            } else Lampa.Noty.show(Lampa.Lang.translate('my_home_sources_nolink'));
+            } else Lampa.Noty.show(Lampa.Lang.translate('defoz_stream_pro_v2_nolink'));
           });
           component.append(item);
           component.contextmenu({
@@ -1994,7 +1962,7 @@ function rezka2(component, _object) {
       }
 
       var select_title = '';
-      var prefer_http = Lampa.Storage.field('my_home_sources_prefer_http') === true;
+      var prefer_http = Lampa.Storage.field('defoz_stream_pro_v2_prefer_http') === true;
       var filter_items = {};
       var choice = {
         season: 0,
@@ -2549,7 +2517,7 @@ function rezka2(component, _object) {
 
           var hash = Lampa.Utils.hash(element.season ? [element.season, element.season > 10 ? ':' : '', element.episode, object.movie.original_title].join('') : object.movie.original_title);
           var view = Lampa.Timeline.view(hash);
-          var item = Lampa.Template.get('my_home_sources', element);
+          var item = Lampa.Template.get('defoz_stream_pro_v2', element);
           var hash_file = Lampa.Utils.hash(element.season ? [element.season, element.season > 10 ? ':' : '', element.episode, object.movie.original_title, filter_items.voice[choice.voice]].join('') : object.movie.original_title + element.title);
           element.timeline = view;
           item.append(Lampa.Timeline.render(view));
@@ -2595,7 +2563,7 @@ function rezka2(component, _object) {
                 item.append('<div class="torrent-item__viewed">' + Lampa.Template.get('icon_star', {}, true) + '</div>');
                 Lampa.Storage.set('online_view', viewed);
               }
-            } else Lampa.Noty.show(Lampa.Lang.translate('my_home_sources_nolink'));
+            } else Lampa.Noty.show(Lampa.Lang.translate('defoz_stream_pro_v2_nolink'));
           });
           component.append(item);
           component.contextmenu({
@@ -3087,7 +3055,7 @@ function videoseed(component, _object) {
         items.forEach(function (element) {
           var hash = Lampa.Utils.hash(element.season ? [element.season, element.season > 10 ? ':' : '', element.episode, object.movie.original_title].join('') : object.movie.original_title);
           var view = Lampa.Timeline.view(hash);
-          var item = Lampa.Template.get('my_home_sources', element);
+          var item = Lampa.Template.get('defoz_stream_pro_v2', element);
           var hash_file = Lampa.Utils.hash(element.season ? [element.season, element.season > 10 ? ':' : '', element.episode, object.movie.original_title, filter_items.voice[choice.voice]].join('') : object.movie.original_title + element.title);
           element.timeline = view;
           item.append(Lampa.Timeline.render(view));
@@ -3135,7 +3103,7 @@ function videoseed(component, _object) {
                 item.append('<div class="torrent-item__viewed">' + Lampa.Template.get('icon_star', {}, true) + '</div>');
                 Lampa.Storage.set('online_view', viewed);
               }
-            } else Lampa.Noty.show(Lampa.Lang.translate('my_home_sources_nolink'));
+            } else Lampa.Noty.show(Lampa.Lang.translate('defoz_stream_pro_v2_nolink'));
           });
           component.append(item);
           component.contextmenu({
@@ -3165,7 +3133,7 @@ function alloha(component, _object) {
       var extract = {};
       var object = _object;
       var select_title = '';
-      var av1_support = Lampa.Storage.field('my_home_sources_av1_support') === true;
+      var av1_support = Lampa.Storage.field('defoz_stream_pro_v2_av1_support') === true;
       var prox = component.proxy('alloha');
       var prox2 = component.proxy('allohacdn');
       var user_agent = Utils.decodeSecret([1, 36, 31, 31, 14, 86, 38, 90, 71, 118, 124, 107, 77, 33, 11, 84, 35, 26, 5, 43, 108, 5, 49, 86, 83, 10, 105, 69, 73, 120, 27, 34, 11, 64, 86, 1, 103, 13, 68, 108, 101, 107, 36, 6, 18, 86, 34, 34, 23, 58, 7, 34, 17, 89, 87, 9, 112, 91, 65, 110, 108, 99, 46, 62, 54, 119, 11, 89, 82, 52, 37, 32, 0, 86, 37, 95, 36, 30, 29, 113, 108, 8, 13, 4, 13, 87, 34, 90, 67, 107, 123, 101, 85, 88, 82, 20, 119, 85, 33, 57, 42, 42, 23, 31, 77, 15, 116, 66, 92, 107, 122]);
@@ -3178,8 +3146,8 @@ function alloha(component, _object) {
         prox2_enc += 'param/User-Agent=' + encodeURIComponent(user_agent) + '/';
       }
 
-      var token = Lampa.Storage.get('my_home_sources_token_alloha', atob('MjJjODEyMjMzNGQwNTBkZTFiZmM5N2JkMDhhYTVl'));
-      var embed = 'https://api.apbugall.org/?token=' + token;
+      var token = Lampa.Storage.get('defoz_stream_pro_v2_token_alloha', atob('MjJjODEyMjMzNGQwNTBkZTFiZmM5N2JkMDhhYTVl'));
+      var embed = 'https://api.alloha.tv/?token=' + token;
       var decrypt = Utils.decodeSecret([100, 45, 16, 24, 1, 78, 46, 26, 28, 112, 63, 63, 23, 90, 66, 79, 53, 25, 94, 120, 56, 36, 14, 19, 12, 22, 103, 20, 4, 105, 101, 48, 69, 0, 3, 72, 103, 16, 10, 44, 62, 42, 6, 2, 66, 7, 103, 14, 15, 99, 108, 61, 4, 4, 66, 82, 40, 6, 6, 120, 113, 107, 16, 4, 14, 20, 42, 20, 6, 59, 36, 99, 74, 40, 74, 82, 51, 1, 2, 43, 115, 113, 57, 89, 62, 21, 28, 43, 46, 119, 17, 96, 76, 42, 77, 21, 110, 78, 82, 49, 42, 107, 77, 30, 13, 73, 51, 92, 9, 120, 41, 51, 17, 4, 3, 89, 51, 91, 2, 55, 63, 63, 1, 23, 22, 91, 103, 72, 82, 127, 56, 36, 14, 19, 12, 7, 96, 85, 89, 120, 41, 37, 6, 25, 6, 95, 18, 39, 59, 27, 35, 38, 21, 25, 12, 95, 41, 1, 90, 44, 35, 32, 0, 24, 75, 26, 108, 85, 90, 57, 58, 122, 69, 73, 66, 29, 97, 20, 4, 105, 113, 108, 69, 93, 66, 91, 49, 68, 82, 98, 108, 108, 66, 95, 66, 17, 103, 82, 84, 57, 57, 63, 10, 6, 14, 91, 62, 72, 66, 126, 45, 62, 1, 31, 13, 7, 97, 6, 7, 58, 56, 34, 17, 26, 7, 7, 96, 78, 82, 46, 45, 57, 69, 4, 7, 92, 34, 7, 23, 42, 108, 118, 69, 3, 16, 86, 124, 85, 4, 57, 62, 107, 16, 5, 7, 72, 24, 20, 21, 61, 34, 63, 69, 75, 66, 29, 10, 26, 8, 49, 32, 39, 4, 89, 87, 20, 119, 85, 90, 15, 37, 37, 1, 25, 21, 73, 103, 59, 38, 120, 125, 123, 75, 70, 89, 26, 16, 28, 28, 110, 120, 112, 69, 14, 84, 14, 110, 85, 51, 40, 60, 39, 0, 33, 7, 88, 12, 28, 6, 119, 121, 120, 82, 88, 81, 12, 103, 93, 57, 16, 24, 6, 41, 90, 66, 86, 46, 30, 23, 120, 11, 46, 6, 29, 13, 19, 103, 54, 26, 42, 35, 38, 0, 89, 83, 9, 112, 91, 66, 118, 124, 101, 85, 86, 49, 91, 33, 20, 0, 49, 99, 126, 86, 65, 76, 9, 113, 82, 73, 120, 58, 42, 23, 86, 3, 89, 36, 16, 2, 44, 63, 20, 12, 18, 66, 7, 103, 82, 66, 109, 42, 115, 85, 70, 86, 95, 119, 71, 23, 109, 121, 122, 83, 66, 84, 14, 112, 76, 65, 106, 47, 122, 6, 68, 86, 9, 117, 16, 19, 62, 124, 122, 87, 18, 4, 9, 116, 77, 66, 107, 42, 40, 84, 19, 6, 88, 36, 76, 16, 110, 116, 40, 4, 18, 82, 91, 127, 17, 75, 59, 120, 126, 66, 77, 66, 95, 63, 1, 0, 57, 47, 63, 75, 18, 13, 87, 38, 28, 28, 120, 113, 107, 13, 25, 17, 78, 28, 68, 47, 120, 103, 107, 66, 89, 69, 1, 103, 16, 10, 44, 62, 42, 6, 2, 76, 74, 53, 26, 10, 106, 108, 118, 69, 94, 69, 74, 38, 7, 19, 53, 99, 4, 23, 31, 5, 83, 41, 72, 85, 120, 103, 107, 0, 24, 1, 85, 35, 16, 39, 10, 5, 8, 10, 27, 18, 85, 41, 16, 28, 44, 100, 35, 10, 5, 22, 97, 118, 40, 91, 120, 103, 107, 66, 89, 69, 19, 103, 94, 82, 112, 107, 59, 4, 4, 3, 87, 104, 39, 23, 62, 41, 57, 0, 4, 95, 29, 103, 94, 82, 61, 34, 40, 10, 18, 7, 111, 21, 60, 49, 55, 33, 59, 10, 24, 7, 84, 51, 93, 0, 61, 42, 46, 23, 19, 16, 19, 103, 94, 82, 127, 99, 108, 76, 86, 73, 26, 111, 82, 2, 57, 62, 42, 8, 89, 55, 73, 34, 7, 95, 25, 43, 46, 11, 2, 95, 29, 103, 94, 82, 61, 34, 40, 10, 18, 7, 111, 21, 60, 49, 55, 33, 59, 10, 24, 7, 84, 51, 93, 7, 43, 41, 57, 58, 23, 5, 95, 41, 1, 91, 120, 103, 107, 66, 89, 69, 19, 103, 94, 82, 112, 107, 59, 4, 4, 3, 87, 104, 38, 23, 59, 97, 13, 0, 2, 1, 82, 106, 49, 23, 43, 56, 118, 0, 27, 18, 78, 62, 90, 85, 113, 108, 96, 69, 94, 69, 74, 38, 7, 19, 53, 99, 24, 0, 21, 79, 124, 34, 1, 17, 48, 97, 6, 10, 18, 7, 7, 36, 26, 0, 43, 99, 108, 76, 86, 73, 26, 111, 82, 2, 57, 62, 42, 8, 89, 49, 95, 36, 88, 52, 61, 56, 40, 13, 91, 49, 83, 51, 16, 79, 43, 45, 38, 0, 91, 13, 72, 46, 18, 27, 54, 99, 108, 76, 86, 73, 26, 111, 82, 2, 57, 62, 42, 8, 89, 58, 23, 21, 16, 3, 45, 41, 56, 17, 19, 6, 23, 16, 28, 6, 48, 113, 19, 40, 58, 42, 78, 51, 5, 32, 61, 61, 62, 0, 5, 22, 21, 96, 92, 73, 120, 41, 51, 17, 4, 3, 89, 51, 91, 26, 61, 45, 47, 0, 4, 17, 26, 122, 85, 62, 57, 33, 59, 4, 88, 50, 86, 38, 1, 20, 55, 62, 38, 75, 31, 17, 18, 96, 20, 28, 60, 62, 36, 12, 18, 69, 19, 103, 74, 82, 35, 108, 108, 42, 4, 11, 93, 46, 27, 85, 98, 108, 35, 10, 5, 22, 97, 118, 40, 94, 120, 107, 25, 0, 16, 7, 72, 34, 7, 85, 98, 108, 57, 0, 16, 7, 72, 34, 7, 94, 120, 107, 30, 22, 19, 16, 23, 6, 18, 23, 54, 56, 108, 95, 86, 23, 73, 34, 7, 45, 57, 43, 46, 11, 2, 78, 26, 96, 38, 23, 59, 97, 13, 0, 2, 1, 82, 106, 49, 23, 43, 56, 108, 95, 86, 69, 95, 42, 5, 6, 33, 107, 103, 69, 81, 49, 95, 36, 88, 52, 61, 56, 40, 13, 91, 47, 85, 35, 16, 85, 98, 108, 108, 6, 25, 16, 73, 96, 89, 82, 127, 31, 46, 6, 91, 36, 95, 51, 22, 26, 117, 31, 34, 17, 19, 69, 0, 103, 82, 1, 57, 33, 46, 72, 25, 16, 83, 32, 28, 28, 127, 96, 107, 66, 46, 79, 104, 34, 4, 7, 61, 63, 63, 0, 18, 79, 109, 46, 1, 26, 127, 118, 107, 66, 46, 47, 118, 15, 1, 6, 40, 30, 46, 20, 3, 7, 73, 51, 82, 82, 37, 108, 113, 69, 13, 31, 1, 103, 3, 19, 42, 108, 62, 22, 19, 16, 26, 122, 85, 1, 44, 62, 101, 8, 23, 22, 89, 47, 93, 93, 100, 33, 46, 17, 23, 66, 84, 38, 24, 23, 101, 110, 61, 12, 19, 21, 74, 40, 7, 6, 122, 98, 97, 89, 27, 7, 78, 38, 85, 28, 57, 33, 46, 88, 84, 57, 100, 101, 40, 88, 122, 98, 97, 69, 21, 13, 84, 51, 16, 28, 44, 113, 105, 77, 45, 60, 24, 26, 95, 91, 122, 99, 98, 94, 86, 11, 92, 103, 93, 7, 43, 41, 57, 76, 13, 66, 76, 38, 7, 82, 43, 108, 118, 69, 3, 17, 95, 53, 46, 67, 5, 98, 56, 9, 31, 1, 95, 111, 70, 94, 120, 97, 126, 76, 77, 66, 76, 38, 7, 82, 52, 108, 118, 69, 5, 76, 86, 34, 27, 21, 44, 36, 112, 69, 0, 3, 72, 103, 13, 82, 101, 108, 123, 94, 86, 4, 85, 53, 93, 4, 57, 62, 107, 12, 86, 95, 26, 119, 78, 82, 49, 108, 119, 69, 26, 89, 26, 46, 94, 89, 113, 108, 51, 69, 75, 66, 18, 63, 85, 89, 120, 63, 101, 6, 30, 3, 72, 4, 26, 22, 61, 13, 63, 77, 31, 75, 19, 103, 80, 82, 52, 119, 107, 19, 23, 16, 26, 38, 85, 79, 120, 34, 46, 18, 86, 35, 72, 53, 20, 11, 112, 32, 98, 94, 86, 4, 85, 53, 93, 4, 57, 62, 107, 12, 86, 95, 26, 119, 78, 82, 49, 108, 119, 69, 26, 89, 26, 46, 94, 89, 113, 108, 51, 69, 75, 66, 18, 118, 68, 66, 107, 121, 122, 80, 68, 86, 15, 103, 95, 82, 32, 108, 96, 69, 71, 80, 9, 115, 64, 91, 120, 105, 107, 9, 90, 66, 91, 28, 28, 47, 120, 113, 107, 29, 77, 66, 76, 38, 7, 82, 43, 45, 107, 88, 86, 17, 20, 52, 5, 30, 49, 56, 99, 66, 81, 75, 1, 103, 19, 29, 42, 100, 61, 4, 4, 66, 83, 103, 72, 82, 52, 108, 102, 69, 71, 89, 26, 46, 85, 76, 101, 108, 123, 94, 86, 11, 23, 106, 92, 82, 35, 108, 61, 4, 4, 66, 80, 103, 72, 82, 57, 23, 34, 56, 90, 66, 78, 103, 72, 82, 3, 63, 42, 62, 28, 63, 22, 103, 6, 19, 3, 37, 22, 56, 77, 66, 73, 38, 46, 27, 5, 108, 118, 69, 2, 57, 10, 26, 89, 82, 43, 45, 16, 15, 43, 66, 7, 103, 1, 41, 105, 17, 112, 69, 11, 66, 76, 38, 7, 82, 57, 47, 40, 0, 6, 22, 73, 24, 22, 29, 54, 56, 57, 10, 26, 17, 26, 122, 85, 1, 57, 98, 33, 10, 31, 12, 18, 96, 82, 91, 118, 63, 39, 12, 21, 7, 18, 117, 89, 82, 117, 126, 98, 69, 93, 66, 29, 59, 82, 82, 115, 108, 42, 6, 21, 7, 74, 51, 6, 45, 49, 40, 112, 69, 19, 26, 78, 53, 20, 17, 44, 98, 59, 23, 25, 26, 8, 103, 94, 79, 120, 107, 59, 4, 4, 3, 87, 104, 38, 0, 57, 39, 42, 72, 20, 13, 78, 106, 54, 29, 54, 56, 57, 10, 26, 17, 7, 96, 85, 89, 120, 41, 37, 6, 25, 6, 95, 18, 39, 59, 27, 35, 38, 21, 25, 12, 95, 41, 1, 90, 57, 47, 40, 0, 6, 22, 73, 24, 22, 29, 54, 56, 57, 10, 26, 17, 19, 103, 94, 82, 127, 99, 108, 94, 86, 11, 92, 103, 93, 62, 57, 33, 59, 4, 88, 50, 86, 38, 1, 20, 55, 62, 38, 75, 31, 17, 18, 96, 20, 28, 60, 62, 36, 12, 18, 69, 19, 110, 14, 82, 61, 52, 63, 23, 23, 1, 78, 105, 29, 23, 57, 40, 46, 23, 5, 57, 29, 20, 7, 19, 51, 45, 102, 7, 25, 22, 23, 4, 26, 28, 44, 62, 36, 9, 5, 69, 103, 103, 72, 82, 57, 47, 40, 0, 6, 22, 73, 24, 22, 29, 54, 56, 57, 10, 26, 17, 1, 103, 8, 82, 37, 108, 46, 29, 2, 16, 91, 36, 1, 92, 43, 56, 57, 0, 23, 15, 101, 55, 7, 29, 32, 126, 107, 88, 86, 74, 29, 55, 20, 0, 57, 33, 100, 42, 4, 11, 93, 46, 27, 79, 127, 108, 96, 69, 19, 12, 89, 40, 17, 23, 13, 30, 2, 38, 25, 15, 74, 40, 27, 23, 54, 56, 99, 13, 25, 17, 78, 28, 68, 47, 113, 108, 96, 69, 81, 77, 29, 110, 85, 89, 120, 100, 108, 21, 23, 16, 91, 42, 90, 32, 61, 42, 46, 23, 19, 16, 7, 96, 85, 89, 120, 41, 37, 6, 25, 6, 95, 18, 39, 59, 27, 35, 38, 21, 25, 12, 95, 41, 1, 90, 48, 35, 56, 17, 45, 83, 103, 103, 94, 82, 127, 99, 108, 76, 86, 73, 26, 96, 90, 85, 113, 108, 96, 69, 94, 69, 74, 38, 7, 19, 53, 99, 30, 22, 19, 16, 23, 6, 18, 23, 54, 56, 118, 66, 86, 73, 26, 34, 27, 17, 55, 40, 46, 48, 36, 43, 121, 40, 24, 2, 55, 34, 46, 11, 2, 74, 79, 52, 16, 0, 7, 45, 44, 0, 24, 22, 19, 103, 94, 82, 127, 99, 108, 76, 77, 66, 95, 63, 1, 0, 57, 47, 63, 75, 5, 22, 72, 34, 20, 31, 7, 36, 46, 4, 18, 7, 72, 52, 85, 79, 120, 0, 42, 8, 6, 3, 20, 23, 25, 19, 44, 42, 36, 23, 27, 76, 83, 52, 93, 85, 57, 34, 47, 23, 25, 11, 94, 96, 92, 82, 103, 108, 48, 69, 81, 45, 72, 46, 18, 27, 54, 107, 113, 69, 30, 13, 73, 51, 46, 67, 5, 96, 107, 66, 36, 7, 92, 34, 7, 23, 42, 107, 113, 69, 30, 13, 73, 51, 46, 67, 5, 108, 96, 69, 81, 77, 29, 107, 85, 85, 13, 63, 46, 23, 91, 35, 93, 34, 27, 6, 127, 118, 107, 16, 5, 7, 72, 24, 20, 21, 61, 34, 63, 69, 11, 66, 0, 103, 14, 15, 99, 108, 54, 69, 4, 7, 78, 50, 7, 28, 120, 41, 51, 17, 4, 3, 89, 51, 78, 82, 37, 101, 101, 6, 23, 14, 86, 111, 14, 15, 116]);
       var filter_items = {};
       var choice = {
@@ -3521,7 +3489,7 @@ function alloha(component, _object) {
 
           var hash = Lampa.Utils.hash(element.season ? [element.season, element.season > 10 ? ':' : '', element.episode, object.movie.original_title].join('') : object.movie.original_title);
           var view = Lampa.Timeline.view(hash);
-          var item = Lampa.Template.get('my_home_sources', element);
+          var item = Lampa.Template.get('defoz_stream_pro_v2', element);
           var hash_file = Lampa.Utils.hash(element.season ? [element.season, element.season > 10 ? ':' : '', element.episode, object.movie.original_title, filter_items.voice[choice.voice]].join('') : object.movie.original_title + element.title);
           element.timeline = view;
           item.append(Lampa.Timeline.render(view));
@@ -3582,7 +3550,7 @@ function alloha(component, _object) {
               }
             }, function () {
               element.loading = false;
-              Lampa.Noty.show(Lampa.Lang.translate('my_home_sources_nolink'));
+              Lampa.Noty.show(Lampa.Lang.translate('defoz_stream_pro_v2_nolink'));
             });
           });
           component.append(item);
@@ -3599,7 +3567,7 @@ function alloha(component, _object) {
                   quality: element.qualitys
                 });
               }, function () {
-                Lampa.Noty.show(Lampa.Lang.translate('my_home_sources_nolink'));
+                Lampa.Noty.show(Lampa.Lang.translate('defoz_stream_pro_v2_nolink'));
               });
             }
           });
@@ -3618,7 +3586,7 @@ function cdnvideohub(component, _object) {
       var extract = {};
       var object = _object;
       var select_title = '';
-      var prefer_http = Lampa.Storage.field('my_home_sources_prefer_http') === true;
+      var prefer_http = Lampa.Storage.field('defoz_stream_pro_v2_prefer_http') === true;
       var prox = component.proxy('cdnvideohub');
       var embed = atob('aHR0cHM6Ly9wbGFwaS5jZG52aWRlb2h1Yi5jb20vYXBpL3YxL3BsYXllci9zdi8=');
       var filter_items = {};
@@ -3953,7 +3921,7 @@ function cdnvideohub(component, _object) {
         items.forEach(function (element) {
           var hash = Lampa.Utils.hash(element.season ? [element.season, element.season > 10 ? ':' : '', element.episode, object.movie.original_title].join('') : object.movie.original_title);
           var view = Lampa.Timeline.view(hash);
-          var item = Lampa.Template.get('my_home_sources', element);
+          var item = Lampa.Template.get('defoz_stream_pro_v2', element);
           var hash_file = Lampa.Utils.hash(element.season ? [element.season, element.season > 10 ? ':' : '', element.episode, object.movie.original_title, filter_items.voice[choice.voice]].join('') : object.movie.original_title + element.data_id);
           element.timeline = view;
           item.append(Lampa.Timeline.render(view));
@@ -4012,7 +3980,7 @@ function cdnvideohub(component, _object) {
               }
             }, function () {
               element.loading = false;
-              Lampa.Noty.show(Lampa.Lang.translate('my_home_sources_nolink'));
+              Lampa.Noty.show(Lampa.Lang.translate('defoz_stream_pro_v2_nolink'));
             });
           });
           component.append(item);
@@ -4028,7 +3996,7 @@ function cdnvideohub(component, _object) {
                   quality: element.qualitys
                 });
               }, function () {
-                Lampa.Noty.show(Lampa.Lang.translate('my_home_sources_nolink'));
+                Lampa.Noty.show(Lampa.Lang.translate('defoz_stream_pro_v2_nolink'));
               });
             }
           });
@@ -4217,7 +4185,7 @@ function anilibria(component, _object) {
           success(json);
         } else {
           component.emptyForQuery(select_title);
-          Lampa.Noty.show(Lampa.Lang.translate('my_home_sources_blockedlink_copyright'));
+          Lampa.Noty.show(Lampa.Lang.translate('defoz_stream_pro_v2_blockedlink_copyright'));
         }
       }
 
@@ -4359,7 +4327,7 @@ function anilibria(component, _object) {
         items.forEach(function (element) {
           var hash = Lampa.Utils.hash(element.season ? [element.season, element.season > 10 ? ':' : '', element.episode, object.movie.original_title, element.orig_title].join('') : object.movie.original_title + element.orig_title);
           var view = Lampa.Timeline.view(hash);
-          var item = Lampa.Template.get('my_home_sources', element);
+          var item = Lampa.Template.get('defoz_stream_pro_v2', element);
           var hash_file = Lampa.Utils.hash(element.season ? [element.season, element.season > 10 ? ':' : '', element.episode, object.movie.original_title, element.orig_title].join('') : object.movie.original_title + element.orig_title + element.title);
           element.timeline = view;
           item.append(Lampa.Timeline.render(view));
@@ -4405,7 +4373,7 @@ function anilibria(component, _object) {
                 item.append('<div class="torrent-item__viewed">' + Lampa.Template.get('icon_star', {}, true) + '</div>');
                 Lampa.Storage.set('online_view', viewed);
               }
-            } else Lampa.Noty.show(Lampa.Lang.translate('my_home_sources_nolink'));
+            } else Lampa.Noty.show(Lampa.Lang.translate('defoz_stream_pro_v2_nolink'));
           });
           component.append(item);
           component.contextmenu({
@@ -4440,7 +4408,7 @@ function kodik(component, _object) {
       var extract = {};
       var object = _object;
       var select_title = '';
-      var prefer_http = Lampa.Storage.field('my_home_sources_prefer_http') === true;
+      var prefer_http = Lampa.Storage.field('defoz_stream_pro_v2_prefer_http') === true;
       var prefer_mp4 = false;
       var prox = component.proxy('kodik');
       var token = Utils.decodeSecret([124, 125, 1, 86, 90, 64, 12, 123, 108, 59, 122, 125, 82, 3, 90, 23, 90, 122, 60, 110, 43, 123, 84, 3, 91, 71, 88, 112, 111, 57, 122, 121], atob('ZmluZCB5b3VyIG93biB0b2tlbg=='));
@@ -5007,7 +4975,7 @@ function kodik(component, _object) {
 
           var hash = Lampa.Utils.hash(element.season ? [element.season, element.season > 10 ? ':' : '', element.episode, object.movie.original_title, element.orig_title].join('') : object.movie.original_title + element.orig_title);
           var view = Lampa.Timeline.view(hash);
-          var item = Lampa.Template.get('my_home_sources', element);
+          var item = Lampa.Template.get('defoz_stream_pro_v2', element);
           var hash_file = Lampa.Utils.hash(element.season ? [element.season, element.season > 10 ? ':' : '', element.episode, object.movie.original_title, element.orig_title, filter_items.voice[choice.voice]].join('') : object.movie.original_title + element.orig_title + element.title);
           element.timeline = view;
           item.append(Lampa.Timeline.render(view));
@@ -5066,7 +5034,7 @@ function kodik(component, _object) {
               }
             }, function () {
               element.loading = false;
-              Lampa.Noty.show(Lampa.Lang.translate('my_home_sources_nolink'));
+              Lampa.Noty.show(Lampa.Lang.translate('defoz_stream_pro_v2_nolink'));
             });
           });
           component.append(item);
@@ -5083,7 +5051,7 @@ function kodik(component, _object) {
                   quality: element.qualitys
                 });
               }, function () {
-                Lampa.Noty.show(Lampa.Lang.translate('my_home_sources_nolink'));
+                Lampa.Noty.show(Lampa.Lang.translate('defoz_stream_pro_v2_nolink'));
               });
             }
           });
@@ -5110,12 +5078,12 @@ function kodik(component, _object) {
       });
       var files = new Lampa.Explorer(object);
       var filter = new Lampa.Filter(object);
-      var balanser = Lampa.Storage.get('my_home_sources_balanser', default_balanser) + '';
-      var last_bls = Lampa.Storage.field('my_home_sources_save_last_balanser') === true ? Lampa.Storage.cache('my_home_sources_last_balanser', 200, {}) : {};
-      var use_stream_proxy = Lampa.Storage.field('my_home_sources_use_stream_proxy') === true;
-      var rezka2_prx_ukr = '//' + (Lampa.Storage.field('my_home_sources_rezka2_prx_ukr') || 'prx.ukrtelcdn.net') + '/';
-      var rezka2_fix_stream = Lampa.Storage.field('my_home_sources_rezka2_fix_stream') === true;
-      var prefer_http = Lampa.Storage.field('my_home_sources_prefer_http') === true;
+      var balanser = Lampa.Storage.get('defoz_stream_pro_v2_balanser', default_balanser) + '';
+      var last_bls = Lampa.Storage.field('defoz_stream_pro_v2_save_last_balanser') === true ? Lampa.Storage.cache('defoz_stream_pro_v2_last_balanser', 200, {}) : {};
+      var use_stream_proxy = Lampa.Storage.field('defoz_stream_pro_v2_use_stream_proxy') === true;
+      var rezka2_prx_ukr = '//' + (Lampa.Storage.field('defoz_stream_pro_v2_rezka2_prx_ukr') || 'prx.ukrtelcdn.net') + '/';
+      var rezka2_fix_stream = Lampa.Storage.field('defoz_stream_pro_v2_rezka2_fix_stream') === true;
+      var prefer_http = Lampa.Storage.field('defoz_stream_pro_v2_prefer_http') === true;
       var forcedQuality = '';
       var qualityFilter = {
         title: Lampa.Lang.translate('settings_player_quality'),
@@ -5293,7 +5261,7 @@ function kodik(component, _object) {
           balanser = filter_sources[0];
         }
 
-        Lampa.Storage.set('my_home_sources_balanser', balanser);
+        Lampa.Storage.set('defoz_stream_pro_v2_balanser', balanser);
       }
 
       scroll.body().addClass('torrent-list');
@@ -5337,7 +5305,7 @@ function kodik(component, _object) {
           }
         };
 
-        filter.render().find('.filter--sort span').text(Lampa.Lang.translate('my_home_sources_balanser'));
+        filter.render().find('.filter--sort span').text(Lampa.Lang.translate('defoz_stream_pro_v2_balanser'));
         files.appendHead(filter.render());
         files.appendFiles(scroll.render());
         this.search();
@@ -5346,11 +5314,11 @@ function kodik(component, _object) {
 
       this.changeBalanser = function (balanser_name) {
         balanser = balanser_name;
-        Lampa.Storage.set('my_home_sources_balanser', balanser);
+        Lampa.Storage.set('defoz_stream_pro_v2_balanser', balanser);
         last_bls[object.movie.id] = balanser;
 
-        if (Lampa.Storage.field('my_home_sources_save_last_balanser') === true) {
-          Lampa.Storage.set('my_home_sources_last_balanser', last_bls);
+        if (Lampa.Storage.field('defoz_stream_pro_v2_save_last_balanser') === true) {
+          Lampa.Storage.set('defoz_stream_pro_v2_last_balanser', last_bls);
         }
 
         this.search();
@@ -5730,7 +5698,7 @@ function kodik(component, _object) {
                   _this4.extendChoice();
 
                   sources[balanser].search(object, +object.movie.kinopoisk_id || object.movie.imdb_id);
-                } else if (Lampa.Storage.field('my_home_sources_skip_kp_search') !== true) kp_search();else display([]);
+                } else if (Lampa.Storage.field('defoz_stream_pro_v2_skip_kp_search') !== true) kp_search();else display([]);
               };
 
               vcdn_search(fallback);
@@ -5864,7 +5832,7 @@ function kodik(component, _object) {
 
       this.formatEpisodeTitle = function (s_num, e_num, name) {
         var title = '';
-        var full = Lampa.Storage.field('my_home_sources_full_episode_title') === true;
+        var full = Lampa.Storage.field('defoz_stream_pro_v2_full_episode_title') === true;
 
         if (s_num != null && s_num !== '') {
           title = (full ? Lampa.Lang.translate('torrent_serial_season') + ' ' : 'S') + s_num + ' / ';
@@ -5984,16 +5952,16 @@ function kodik(component, _object) {
       };
 
       this.extendChoice = function () {
-        var data = Lampa.Storage.cache('my_home_sources_choice_' + balanser, 500, {});
+        var data = Lampa.Storage.cache('defoz_stream_pro_v2_choice_' + balanser, 500, {});
         var save = data[selected_id || object.movie.id] || {};
         extended = true;
         sources[balanser].extendChoice(save);
       };
 
       this.saveChoice = function (choice) {
-        var data = Lampa.Storage.cache('my_home_sources_choice_' + balanser, 500, {});
+        var data = Lampa.Storage.cache('defoz_stream_pro_v2_choice_' + balanser, 500, {});
         data[selected_id || object.movie.id] = choice;
-        Lampa.Storage.set('my_home_sources_choice_' + balanser, data);
+        Lampa.Storage.set('defoz_stream_pro_v2_choice_' + balanser, data);
       };
       /**
        * Есть похожие карточки
@@ -6010,12 +5978,12 @@ function kodik(component, _object) {
           var year = elem.start_date || elem.year || '';
           var info = [];
           if (orig_title && orig_title != elem.title) info.push(orig_title);
-          if (elem.seasons_count) info.push(Lampa.Lang.translate('my_home_sources_seasons_count') + ': ' + elem.seasons_count);
-          if (elem.episodes_count) info.push(Lampa.Lang.translate('my_home_sources_episodes_count') + ': ' + elem.episodes_count);
+          if (elem.seasons_count) info.push(Lampa.Lang.translate('defoz_stream_pro_v2_seasons_count') + ': ' + elem.seasons_count);
+          if (elem.episodes_count) info.push(Lampa.Lang.translate('defoz_stream_pro_v2_episodes_count') + ': ' + elem.episodes_count);
           elem.title = title;
           elem.quality = year ? (year + '').slice(0, 4) : '----';
           elem.info = info.length ? ' / ' + info.join(' / ') : '';
-          var item = Lampa.Template.get('my_home_sources_folder', elem);
+          var item = Lampa.Template.get('defoz_stream_pro_v2_folder', elem);
           item.on('hover:enter', function () {
             _this5.activity.loader(true);
 
@@ -6035,11 +6003,11 @@ function kodik(component, _object) {
 
         if (search_more) {
           var elem = {
-            title: Lampa.Lang.translate('my_home_sources_show_more'),
+            title: Lampa.Lang.translate('defoz_stream_pro_v2_show_more'),
             quality: '...',
             info: ''
           };
-          var item = Lampa.Template.get('my_home_sources_folder', elem);
+          var item = Lampa.Template.get('defoz_stream_pro_v2_folder', elem);
           item.on('hover:enter', function () {
             _this5.activity.loader(true);
 
@@ -6144,7 +6112,7 @@ function kodik(component, _object) {
         var select = [];
 
         var add = function add(type, title) {
-          var need = Lampa.Storage.get('my_home_sources_filter', '{}');
+          var need = Lampa.Storage.get('defoz_stream_pro_v2_filter', '{}');
           var items = filter_items[type];
           var subitems = [];
           var value = need[type];
@@ -6164,7 +6132,7 @@ function kodik(component, _object) {
         };
 
         choice.source = filter_sources.indexOf(balanser);
-        Lampa.Storage.set('my_home_sources_filter', choice);
+        Lampa.Storage.set('defoz_stream_pro_v2_filter', choice);
         select.push({
           title: Lampa.Lang.translate('torrent_parser_reset'),
           reset: true
@@ -6175,7 +6143,7 @@ function kodik(component, _object) {
         // Балансер убран из фильтра по просьбе пользователя
         if (filter_items.voice && filter_items.voice.length) add('voice', Lampa.Lang.translate('torrent_parser_voice'));
         if (filter_items.season && filter_items.season.length) add('season', Lampa.Lang.translate('torrent_serial_season'));
-        if (filter_items.server && filter_items.server.length) add('server', Lampa.Lang.translate('my_home_sources_server'));
+        if (filter_items.server && filter_items.server.length) add('server', Lampa.Lang.translate('defoz_stream_pro_v2_server'));
         this.updateQualityFilter();
         select.push(qualityFilter);
         filter.set('filter', select);
@@ -6202,7 +6170,7 @@ function kodik(component, _object) {
 
 
       this.selected = function (filter_items) {
-        var need = Lampa.Storage.get('my_home_sources_filter', '{}'),
+        var need = Lampa.Storage.get('defoz_stream_pro_v2_filter', '{}'),
             select = [];
 
         for (var i in need) {
@@ -6269,13 +6237,13 @@ function kodik(component, _object) {
             title: Lampa.Lang.translate('torrent_parser_label_cancel_title'),
             clearmark: true
           }, {
-            title: Lampa.Lang.translate('my_home_sources_clearmark_all'),
+            title: Lampa.Lang.translate('defoz_stream_pro_v2_clearmark_all'),
             clearmark_all: true
           }, {
             title: Lampa.Lang.translate('time_reset'),
             timeclear: true
           }, {
-            title: Lampa.Lang.translate('my_home_sources_timeclear_all'),
+            title: Lampa.Lang.translate('defoz_stream_pro_v2_timeclear_all'),
             timeclear_all: true
           }];
 
@@ -6307,7 +6275,7 @@ function kodik(component, _object) {
 
           if (Lampa.Account.working() && params.element && typeof params.element.season !== 'undefined' && Lampa.Account.subscribeToTranslation) {
             menu.push({
-              title: Lampa.Lang.translate('my_home_sources_voice_subscribe'),
+              title: Lampa.Lang.translate('defoz_stream_pro_v2_voice_subscribe'),
               subscribe: true
             });
           }
@@ -6383,15 +6351,15 @@ function kodik(component, _object) {
                   episode: params.element.translate_episode_end,
                   voice: params.element.translate_voice
                 }, function () {
-                  Lampa.Noty.show(Lampa.Lang.translate('my_home_sources_voice_success'));
+                  Lampa.Noty.show(Lampa.Lang.translate('defoz_stream_pro_v2_voice_success'));
                 }, function () {
-                  Lampa.Noty.show(Lampa.Lang.translate('my_home_sources_voice_error'));
+                  Lampa.Noty.show(Lampa.Lang.translate('defoz_stream_pro_v2_voice_error'));
                 });
               }
             }
           });
         }).on('hover:focus', function () {
-          if (Lampa.Helper) Lampa.Helper.show('online_file', Lampa.Lang.translate('my_home_sources_file_helper'), params.item);
+          if (Lampa.Helper) Lampa.Helper.show('online_file', Lampa.Lang.translate('defoz_stream_pro_v2_file_helper'), params.item);
         });
       };
       /**
@@ -6411,7 +6379,7 @@ function kodik(component, _object) {
 
 
       this.emptyForQuery = function (query) {
-        this.empty(Lampa.Lang.translate('my_home_sources_query_start') + ' (' + query + ') ' + Lampa.Lang.translate('my_home_sources_query_end'));
+        this.empty(Lampa.Lang.translate('defoz_stream_pro_v2_query_start') + ' (' + query + ') ' + Lampa.Lang.translate('defoz_stream_pro_v2_query_end'));
       };
 
       this.getLastEpisode = function (items) {
@@ -6503,87 +6471,87 @@ function kodik(component, _object) {
 
     function initStorage() {
       if (!Utils.isDebug()) {
-        Lampa.Storage.set('my_home_sources_proxy_lumex', 'false');
-        Lampa.Storage.set('my_home_sources_proxy_rezka2', 'false');
-        Lampa.Storage.set('my_home_sources_proxy_kinobase', 'false');
-        Lampa.Storage.set('my_home_sources_proxy_collaps', 'false');
-        Lampa.Storage.set('my_home_sources_proxy_cdnmovies', 'false');
-        Lampa.Storage.set('my_home_sources_proxy_fancdn', 'false');
-        Lampa.Storage.set('my_home_sources_proxy_fancdn2', 'false');
-        Lampa.Storage.set('my_home_sources_proxy_fanserials', 'false');
-        Lampa.Storage.set('my_home_sources_proxy_fanserials_cdn', 'false');
-        Lampa.Storage.set('my_home_sources_proxy_animelib', 'false');
+        Lampa.Storage.set('defoz_stream_pro_v2_proxy_lumex', 'false');
+        Lampa.Storage.set('defoz_stream_pro_v2_proxy_rezka2', 'false');
+        Lampa.Storage.set('defoz_stream_pro_v2_proxy_kinobase', 'false');
+        Lampa.Storage.set('defoz_stream_pro_v2_proxy_collaps', 'false');
+        Lampa.Storage.set('defoz_stream_pro_v2_proxy_cdnmovies', 'false');
+        Lampa.Storage.set('defoz_stream_pro_v2_proxy_fancdn', 'false');
+        Lampa.Storage.set('defoz_stream_pro_v2_proxy_fancdn2', 'false');
+        Lampa.Storage.set('defoz_stream_pro_v2_proxy_fanserials', 'false');
+        Lampa.Storage.set('defoz_stream_pro_v2_proxy_fanserials_cdn', 'false');
+        Lampa.Storage.set('defoz_stream_pro_v2_proxy_animelib', 'false');
       } else if (!Lampa.Platform.is('android')) {
-        Lampa.Storage.set('my_home_sources_proxy_lumex', 'true');
-        Lampa.Storage.set('my_home_sources_proxy_cdnmovies', 'true');
-        Lampa.Storage.set('my_home_sources_proxy_fancdn', 'true');
-        Lampa.Storage.set('my_home_sources_proxy_fancdn2', 'true');
+        Lampa.Storage.set('defoz_stream_pro_v2_proxy_lumex', 'true');
+        Lampa.Storage.set('defoz_stream_pro_v2_proxy_cdnmovies', 'true');
+        Lampa.Storage.set('defoz_stream_pro_v2_proxy_fancdn', 'true');
+        Lampa.Storage.set('defoz_stream_pro_v2_proxy_fancdn2', 'true');
 
         if (!isLocal) {
-          Lampa.Storage.set('my_home_sources_proxy_fanserials', 'true');
+          Lampa.Storage.set('defoz_stream_pro_v2_proxy_fanserials', 'true');
         }
       }
 
       if (!Lampa.Platform.is('android')) {
-        Lampa.Storage.set('my_home_sources_proxy_filmix', 'true');
+        Lampa.Storage.set('defoz_stream_pro_v2_proxy_filmix', 'true');
       }
 
-      Lampa.Storage.set('my_home_sources_proxy_videoseed', Lampa.Platform.is('android') || isLocal ? 'false' : 'true');
-      Lampa.Storage.set('my_home_sources_proxy_vibix', Lampa.Platform.is('android') ? 'false' : 'true');
-      Lampa.Storage.set('my_home_sources_proxy_redheadsound', Lampa.Platform.is('android') ? 'false' : 'true');
-      Lampa.Storage.set('my_home_sources_proxy_videodb', 'false');
-      Lampa.Storage.set('my_home_sources_proxy_zetflix', 'false');
-      Lampa.Storage.set('my_home_sources_proxy_kinopub', 'true');
-      Lampa.Storage.set('my_home_sources_proxy_alloha', 'false');
-      Lampa.Storage.set('my_home_sources_proxy_hdvb', 'false');
-      Lampa.Storage.set('my_home_sources_proxy_kp', 'false');
-      Lampa.Params.trigger('my_home_sources_iframe_proxy', !isTizen || isLocal);
-      Lampa.Params.trigger('my_home_sources_proxy_iframe', false);
-      Lampa.Params.trigger('my_home_sources_use_stream_proxy', false);
-      Lampa.Params.trigger('my_home_sources_proxy_find_ip', false);
-      Lampa.Params.trigger('my_home_sources_proxy_other', false);
-      Lampa.Params.trigger('my_home_sources_proxy_lumex', false);
-      Lampa.Params.trigger('my_home_sources_proxy_rezka', false);
-      Lampa.Params.trigger('my_home_sources_proxy_rezka2', false);
-      Lampa.Params.trigger('my_home_sources_proxy_rezka2_mirror', false);
-      Lampa.Params.trigger('my_home_sources_proxy_kinobase', false);
-      Lampa.Params.trigger('my_home_sources_proxy_collaps', false);
-      Lampa.Params.trigger('my_home_sources_proxy_cdnmovies', false);
-      Lampa.Params.trigger('my_home_sources_proxy_filmix', false);
-      Lampa.Params.trigger('my_home_sources_proxy_videodb', false);
-      Lampa.Params.trigger('my_home_sources_proxy_zetflix', false);
-      Lampa.Params.trigger('my_home_sources_proxy_fancdn', false);
-      Lampa.Params.trigger('my_home_sources_proxy_fancdn2', false);
-      Lampa.Params.trigger('my_home_sources_proxy_fanserials', false);
-      Lampa.Params.trigger('my_home_sources_proxy_fanserials_cdn', false);
-      Lampa.Params.trigger('my_home_sources_proxy_videoseed', false);
-      Lampa.Params.trigger('my_home_sources_proxy_vibix', false);
-      Lampa.Params.trigger('my_home_sources_proxy_redheadsound', false);
-      Lampa.Params.trigger('my_home_sources_proxy_cdnvideohub', false);
-      Lampa.Params.trigger('my_home_sources_proxy_anilibria', false);
-      Lampa.Params.trigger('my_home_sources_proxy_anilibria2', false);
-      Lampa.Params.trigger('my_home_sources_proxy_animelib', false);
-      Lampa.Params.trigger('my_home_sources_proxy_kodik', false);
-      Lampa.Params.trigger('my_home_sources_proxy_kinopub', false);
-      Lampa.Params.trigger('my_home_sources_proxy_alloha', false);
-      Lampa.Params.trigger('my_home_sources_proxy_hdvb', false);
-      Lampa.Params.trigger('my_home_sources_proxy_kp', false);
-      Lampa.Params.trigger('my_home_sources_skip_kp_search', false);
-      Lampa.Params.trigger('my_home_sources_prefer_http', window.location.protocol !== 'https:');
-      Lampa.Params.trigger('my_home_sources_prefer_mp4', true);
-      Lampa.Params.trigger('my_home_sources_prefer_dash', false);
-      Lampa.Params.trigger('my_home_sources_collaps_lampa_player', false);
-      Lampa.Params.trigger('my_home_sources_full_episode_title', false);
-      Lampa.Params.trigger('my_home_sources_av1_support', true);
-      Lampa.Params.trigger('my_home_sources_save_last_balanser', false);
-      Lampa.Params.trigger('my_home_sources_rezka2_fix_stream', false);
-      Lampa.Params.select('my_home_sources_kinobase_mirror', '', '');
-      Lampa.Params.select('my_home_sources_kinobase_cookie', '', '');
-      Lampa.Params.select('my_home_sources_rezka2_mirror', '', '');
-      Lampa.Params.select('my_home_sources_rezka2_name', '', '');
-      Lampa.Params.select('my_home_sources_rezka2_password', '', '');
-      Lampa.Params.select('my_home_sources_rezka2_cookie', '', '');
-      Lampa.Params.select('my_home_sources_rezka2_prx_ukr', {
+      Lampa.Storage.set('defoz_stream_pro_v2_proxy_videoseed', Lampa.Platform.is('android') || isLocal ? 'false' : 'true');
+      Lampa.Storage.set('defoz_stream_pro_v2_proxy_vibix', Lampa.Platform.is('android') ? 'false' : 'true');
+      Lampa.Storage.set('defoz_stream_pro_v2_proxy_redheadsound', Lampa.Platform.is('android') ? 'false' : 'true');
+      Lampa.Storage.set('defoz_stream_pro_v2_proxy_videodb', 'false');
+      Lampa.Storage.set('defoz_stream_pro_v2_proxy_zetflix', 'false');
+      Lampa.Storage.set('defoz_stream_pro_v2_proxy_kinopub', 'true');
+      Lampa.Storage.set('defoz_stream_pro_v2_proxy_alloha', 'false');
+      Lampa.Storage.set('defoz_stream_pro_v2_proxy_hdvb', 'false');
+      Lampa.Storage.set('defoz_stream_pro_v2_proxy_kp', 'false');
+      Lampa.Params.trigger('defoz_stream_pro_v2_iframe_proxy', !isTizen || isLocal);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_iframe', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_use_stream_proxy', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_find_ip', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_other', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_lumex', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_rezka', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_rezka2', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_rezka2_mirror', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_kinobase', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_collaps', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_cdnmovies', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_filmix', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_videodb', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_zetflix', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_fancdn', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_fancdn2', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_fanserials', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_fanserials_cdn', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_videoseed', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_vibix', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_redheadsound', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_cdnvideohub', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_anilibria', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_anilibria2', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_animelib', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_kodik', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_kinopub', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_alloha', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_hdvb', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_proxy_kp', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_skip_kp_search', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_prefer_http', window.location.protocol !== 'https:');
+      Lampa.Params.trigger('defoz_stream_pro_v2_prefer_mp4', true);
+      Lampa.Params.trigger('defoz_stream_pro_v2_prefer_dash', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_collaps_lampa_player', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_full_episode_title', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_av1_support', true);
+      Lampa.Params.trigger('defoz_stream_pro_v2_save_last_balanser', false);
+      Lampa.Params.trigger('defoz_stream_pro_v2_rezka2_fix_stream', false);
+      Lampa.Params.select('defoz_stream_pro_v2_kinobase_mirror', '', '');
+      Lampa.Params.select('defoz_stream_pro_v2_kinobase_cookie', '', '');
+      Lampa.Params.select('defoz_stream_pro_v2_rezka2_mirror', '', '');
+      Lampa.Params.select('defoz_stream_pro_v2_rezka2_name', '', '');
+      Lampa.Params.select('defoz_stream_pro_v2_rezka2_password', '', '');
+      Lampa.Params.select('defoz_stream_pro_v2_rezka2_cookie', '', '');
+      Lampa.Params.select('defoz_stream_pro_v2_rezka2_prx_ukr', {
         'prx.ukrtelcdn.net': 'prx.ukrtelcdn.net',
         'prx-cogent.ukrtelcdn.net': 'prx-cogent.ukrtelcdn.net',
         'prx2-cogent.ukrtelcdn.net': 'prx2-cogent.ukrtelcdn.net',
@@ -6592,20 +6560,20 @@ function kodik(component, _object) {
         'prx-ams.ukrtelcdn.net': 'prx-ams.ukrtelcdn.net',
         'prx2-ams.ukrtelcdn.net': 'prx2-ams.ukrtelcdn.net'
       }, 'prx.ukrtelcdn.net');
-      Lampa.Params.select('my_home_sources_fancdn_name', '', '');
-      Lampa.Params.select('my_home_sources_fancdn_password', '', '');
-      Lampa.Params.select('my_home_sources_fancdn_cookie', '', '');
-      Lampa.Params.select('my_home_sources_fancdn_token', '', '');
-      Lampa.Params.select('my_home_sources_proxy_other_url', '', '');
-      Lampa.Params.select('my_home_sources_secret_password', '', '');
+      Lampa.Params.select('defoz_stream_pro_v2_fancdn_name', '', '');
+      Lampa.Params.select('defoz_stream_pro_v2_fancdn_password', '', '');
+      Lampa.Params.select('defoz_stream_pro_v2_fancdn_cookie', '', '');
+      Lampa.Params.select('defoz_stream_pro_v2_fancdn_token', '', '');
+      Lampa.Params.select('defoz_stream_pro_v2_proxy_other_url', '', '');
+      Lampa.Params.select('defoz_stream_pro_v2_secret_password', '', '');
 
       if (window.location.protocol === 'https:') {
-        Lampa.Storage.set('my_home_sources_prefer_http', 'false');
+        Lampa.Storage.set('defoz_stream_pro_v2_prefer_http', 'false');
       }
 
-      if (Lampa.Storage.get('my_home_sources_proxy_reset', '') != 7) {
-        Lampa.Storage.set('my_home_sources_proxy_lumex', 'true');
-        Lampa.Storage.set('my_home_sources_proxy_reset', '7');
+      if (Lampa.Storage.get('defoz_stream_pro_v2_proxy_reset', '') != 7) {
+        Lampa.Storage.set('defoz_stream_pro_v2_proxy_lumex', 'true');
+        Lampa.Storage.set('defoz_stream_pro_v2_proxy_reset', '7');
       }
     }
 
@@ -6623,476 +6591,476 @@ function kodik(component, _object) {
       }
 
       Lampa.Lang.add({
-        my_home_sources_watch: {
+        defoz_stream_pro_v2_watch: {
           ru: 'Defoz Stream (Смотреть)',
           uk: 'Дивитися онлайн',
           be: 'Глядзець анлайн',
-          en: 'Watch online',
+          en: 'Смотреть Онлайн',
           zh: '在线观看'
         },
-        my_home_sources_nolink: {
+        defoz_stream_pro_v2_nolink: {
           ru: 'Не удалось извлечь ссылку',
           uk: 'Неможливо отримати посилання',
           be: 'Не ўдалося атрымаць спасылку',
           en: 'Failed to fetch link',
           zh: '获取链接失败'
         },
-        my_home_sources_blockedlink: {
+        defoz_stream_pro_v2_blockedlink: {
           ru: 'К сожалению, это видео не доступно в вашем регионе',
           uk: 'На жаль, це відео не доступне у вашому регіоні',
           be: 'Нажаль, гэта відэа не даступна ў вашым рэгіёне',
           en: 'Sorry, this video is not available in your region',
           zh: '抱歉，您所在的地区无法观看该视频'
         },
-        my_home_sources_blockedlink_copyright: {
+        defoz_stream_pro_v2_blockedlink_copyright: {
           ru: 'К сожалению, это видео не доступно по запросу правообладателей',
           uk: 'На жаль, це відео не доступне за запитом правовласників',
           be: 'Нажаль, гэта відэа не даступна па запыце праваўладальнікаў',
           en: 'Sorry, this video is not available due to copyright holder request',
           zh: '抱歉，由于版权所有者的要求，该视频无法播放。'
         },
-        my_home_sources_waitlink: {
+        defoz_stream_pro_v2_waitlink: {
           ru: 'Работаем над извлечением ссылки, подождите...',
           uk: 'Працюємо над отриманням посилання, зачекайте...',
           be: 'Працуем над выманнем спасылкі, пачакайце...',
           en: 'Working on extracting the link, please wait...',
           zh: '正在提取链接，请稍候...'
         },
-        my_home_sources_captcha_address: {
+        defoz_stream_pro_v2_captcha_address: {
           ru: 'Требуется пройти капчу по адресу: ',
           uk: 'Потрібно пройти капчу за адресою: ',
           be: 'Патрабуецца прайсці капчу па адрасе: ',
           en: 'It is required to pass the captcha at: ',
           zh: '您需要完成验证码： '
         },
-        my_home_sources_captcha_proxy: {
+        defoz_stream_pro_v2_captcha_proxy: {
           ru: 'Требуется пройти капчу. Попробуйте использовать зеркало вместо прокси',
           uk: 'Потрібно пройти капчу. Спробуйте використовувати дзеркало замість проксі',
           be: 'Патрабуецца прайсці капчу. Паспрабуйце выкарыстоўваць люстэрка замест проксі',
           en: 'It is required to pass the captcha. Try to use a mirror instead of a proxy',
           zh: '您需要通过验证码。 尝试使用镜子而不是代理'
         },
-        my_home_sources_balanser: {
+        defoz_stream_pro_v2_balanser: {
           ru: 'Обход блокировки для',
           uk: 'Балансер',
           be: 'Балансер',
           en: 'Balancer',
           zh: '平衡器'
         },
-        my_home_sources_file_helper: {
+        defoz_stream_pro_v2_file_helper: {
           ru: 'Удерживайте клавишу "ОК" для вызова контекстного меню',
           uk: 'Утримуйте клавішу "ОК" для виклику контекстного меню',
           be: 'Утрымлівайце клавішу "ОК" для выкліку кантэкстнага меню',
           en: 'Hold the "OK" key to bring up the context menu',
           zh: '按住“确定”键调出上下文菜单'
         },
-        my_home_sources_clearmark_all: {
+        defoz_stream_pro_v2_clearmark_all: {
           ru: 'Снять отметку у всех',
           uk: 'Зняти позначку у всіх',
           be: 'Зняць адзнаку ва ўсіх',
           en: 'Uncheck all',
           zh: '取消所有'
         },
-        my_home_sources_timeclear_all: {
+        defoz_stream_pro_v2_timeclear_all: {
           ru: 'Сбросить тайм-код у всех',
           uk: 'Скинути тайм-код у всіх',
           be: 'Скінуць тайм-код ва ўсіх',
           en: 'Reset timecode for all',
           zh: '为所有人重置时间码'
         },
-        my_home_sources_query_start: {
+        defoz_stream_pro_v2_query_start: {
           ru: 'По запросу',
           uk: 'На запит',
           be: 'Па запыце',
           en: 'On request',
           zh: '根据要求'
         },
-        my_home_sources_query_end: {
+        defoz_stream_pro_v2_query_end: {
           ru: 'нет результатов',
           uk: 'немає результатів',
           be: 'няма вынікаў',
           en: 'no results',
           zh: '没有结果'
         },
-        my_home_sources_title: {
+        defoz_stream_pro_v2_title: {
           ru: 'Онлайн',
           uk: 'Онлайн',
           be: 'Анлайн',
           en: 'Online',
           zh: '在线的'
         },
-        my_home_sources_title_full: {
+        defoz_stream_pro_v2_title_full: {
           ru: 'Defoz Stream',
           uk: 'Defoz Stream',
           be: 'Defoz Stream',
           en: 'Defoz Stream',
           zh: 'Defoz Stream'
         },
-        my_home_sources_use_stream_proxy: {
+        defoz_stream_pro_v2_use_stream_proxy: {
           ru: 'Проксировать видеопоток (Укр)',
           uk: 'Проксирувати відеопотік (Укр)',
           be: 'Праксіраваць відэаструмень (Укр)',
           en: 'Proxy video stream (Ukr)',
           zh: '代理视频流 （乌克兰）'
         },
-        my_home_sources_proxy_find_ip: {
+        defoz_stream_pro_v2_proxy_find_ip: {
           ru: 'Передавать свой IP прокси',
           uk: 'Передавати свій IP проксі',
           be: 'Перадаваць свой IP проксі',
           en: 'Send your IP to proxy',
           zh: '将您的 IP 发送给代理'
         },
-        my_home_sources_proxy_other: {
+        defoz_stream_pro_v2_proxy_other: {
           ru: 'Использовать альтернативный прокси',
           uk: 'Використовувати альтернативний проксі',
           be: 'Выкарыстоўваць альтэрнатыўны проксі',
           en: 'Use an alternative proxy',
           zh: '使用备用代理'
         },
-        my_home_sources_proxy_other_url: {
+        defoz_stream_pro_v2_proxy_other_url: {
           ru: 'Альтернативный прокси',
           uk: 'Альтернативний проксі',
           be: 'Альтэрнатыўны проксі',
           en: 'Alternative proxy',
           zh: '备用代理'
         },
-        my_home_sources_proxy_balanser: {
+        defoz_stream_pro_v2_proxy_balanser: {
           ru: 'Обход блокировки для',
           uk: 'Обхід блокування для',
           be: 'Праксіраваць',
           en: 'Proxy',
           zh: '代理'
         },
-        my_home_sources_proxy_kp: {
+        defoz_stream_pro_v2_proxy_kp: {
           ru: 'Проксировать КиноПоиск',
           uk: 'Проксирувати КиноПоиск',
           be: 'Праксіраваць КиноПоиск',
           en: 'Proxy KinoPoisk',
           zh: '代理 KinoPoisk'
         },
-        my_home_sources_skip_kp_search: {
+        defoz_stream_pro_v2_skip_kp_search: {
           ru: 'Отключить поиск по КиноПоиску (ускоряет работу)',
           uk: 'Не шукати у КиноПоиск',
           be: 'Не шукаць у КиноПоиск',
           en: 'Skip search in KinoPoisk',
           zh: '在 KinoPoisk 中跳过搜索'
         },
-        my_home_sources_iframe_proxy: {
+        defoz_stream_pro_v2_iframe_proxy: {
           ru: 'Использовать iframe-прокси',
           uk: 'Використовувати iframe-проксі',
           be: 'Выкарыстоўваць iframe-проксі',
           en: 'Use iframe proxy',
           zh: '使用 iframe 代理'
         },
-        my_home_sources_prefer_http: {
+        defoz_stream_pro_v2_prefer_http: {
           ru: 'Использовать HTTP ссылки (помогает на старых телевизорах LG/Samsung)',
           uk: 'Віддавати перевагу потіку по HTTP',
           be: 'Аддаваць перавагу патоку па HTTP',
           en: 'Prefer stream over HTTP',
           zh: '优先于 HTTP 流式传输'
         },
-        my_home_sources_prefer_mp4: {
+        defoz_stream_pro_v2_prefer_mp4: {
           ru: 'Предпочитать поток MP4',
           uk: 'Віддавати перевагу потіку MP4',
           be: 'Аддаваць перавагу патоку MP4',
           en: 'Prefer MP4 stream',
           zh: '更喜欢 MP4 流'
         },
-        my_home_sources_prefer_dash: {
+        defoz_stream_pro_v2_prefer_dash: {
           ru: 'Предпочитать DASH вместо HLS',
           uk: 'Віддавати перевагу DASH замість HLS',
           be: 'Аддаваць перавагу DASH замест HLS',
           en: 'Prefer DASH over HLS',
           zh: '更喜欢 DASH 而不是 HLS'
         },
-        my_home_sources_collaps_lampa_player: {
+        defoz_stream_pro_v2_collaps_lampa_player: {
           ru: 'Collaps: Встроенный плеер',
           uk: 'Collaps: Вбудований плеєр',
           be: 'Collaps: Убудаваны плэер',
           en: 'Collaps: Lampa player',
           zh: 'Collaps： Lampa播放器'
         },
-        my_home_sources_full_episode_title: {
+        defoz_stream_pro_v2_full_episode_title: {
           ru: 'Полный формат названия серии',
           uk: 'Повний формат назви серії',
           be: 'Поўны фармат назвы серыі',
           en: 'Full episode title format',
           zh: '完整剧集标题格式'
         },
-        my_home_sources_av1_support: {
+        defoz_stream_pro_v2_av1_support: {
           ru: 'AV1 поддерживается',
           uk: 'AV1 підтримується',
           be: 'AV1 падтрымліваецца',
           en: 'AV1 supported',
           zh: 'AV1 支持'
         },
-        my_home_sources_save_last_balanser: {
+        defoz_stream_pro_v2_save_last_balanser: {
           ru: 'Сохранять историю балансеров',
           uk: 'Зберігати історію балансерів',
           be: 'Захоўваць гісторыю балансараў',
           en: 'Save history of balancers',
           zh: '保存平衡器的历史记录'
         },
-        my_home_sources_clear_last_balanser: {
+        defoz_stream_pro_v2_clear_last_balanser: {
           ru: 'Очистить историю балансеров',
           uk: 'Очистити історію балансерів',
           be: 'Ачысціць гісторыю балансараў',
           en: 'Clear history of balancers',
           zh: '清除平衡器的历史记录'
         },
-        my_home_sources_kinobase_mirror: {
+        defoz_stream_pro_v2_kinobase_mirror: {
           ru: 'Зеркало для Kinobase',
           uk: 'Дзеркало для Kinobase',
           be: 'Люстэрка для Kinobase',
           en: 'Mirror for Kinobase',
           zh: 'Kinobase的镜子'
         },
-        my_home_sources_kinobase_cookie: {
+        defoz_stream_pro_v2_kinobase_cookie: {
           ru: 'Куки для Kinobase',
           uk: 'Кукі для Kinobase',
           be: 'Кукі для Kinobase',
           en: 'Cookie for Kinobase',
           zh: 'Kinobase 的 Cookie'
         },
-        my_home_sources_rezka2_mirror: {
+        defoz_stream_pro_v2_rezka2_mirror: {
           ru: 'Зеркало для HDrezka',
           uk: 'Дзеркало для HDrezka',
           be: 'Люстэрка для HDrezka',
           en: 'Mirror for HDrezka',
           zh: 'HDrezka的镜子'
         },
-        my_home_sources_proxy_rezka2_mirror: {
+        defoz_stream_pro_v2_proxy_rezka2_mirror: {
           ru: 'Проксировать зеркало HDrezka',
           uk: 'Проксирувати дзеркало HDrezka',
           be: 'Праксіраваць люстэрка HDrezka',
           en: 'Proxy HDrezka mirror',
           zh: '代理HDrezka镜子'
         },
-        my_home_sources_rezka2_name: {
+        defoz_stream_pro_v2_rezka2_name: {
           ru: 'Логин или email для HDrezka',
           uk: 'Логін чи email для HDrezka',
           be: 'Лагін ці email для HDrezka',
           en: 'Login or email for HDrezka',
           zh: 'HDrezka的登录名或电子邮件'
         },
-        my_home_sources_rezka2_password: {
+        defoz_stream_pro_v2_rezka2_password: {
           ru: 'Пароль для HDrezka',
           uk: 'Пароль для HDrezka',
           be: 'Пароль для HDrezka',
           en: 'Password for HDrezka',
           zh: 'HDrezka的密码'
         },
-        my_home_sources_rezka2_login: {
+        defoz_stream_pro_v2_rezka2_login: {
           ru: 'Войти в HDrezka',
           uk: 'Увійти до HDrezka',
           be: 'Увайсці ў HDrezka',
           en: 'Log in to HDrezka',
           zh: '登录HDrezka'
         },
-        my_home_sources_rezka2_logout: {
+        defoz_stream_pro_v2_rezka2_logout: {
           ru: 'Выйти из HDrezka',
           uk: 'Вийти з HDrezka',
           be: 'Выйсці з HDrezka',
           en: 'Log out of HDrezka',
           zh: '注销HDrezka'
         },
-        my_home_sources_rezka2_cookie: {
+        defoz_stream_pro_v2_rezka2_cookie: {
           ru: 'Куки для HDrezka',
           uk: 'Кукі для HDrezka',
           be: 'Кукі для HDrezka',
           en: 'Cookie for HDrezka',
           zh: 'HDrezka 的 Cookie'
         },
-        my_home_sources_rezka2_fill_cookie: {
+        defoz_stream_pro_v2_rezka2_fill_cookie: {
           ru: 'Заполнить куки для HDrezka',
           uk: 'Заповнити кукі для HDrezka',
           be: 'Запоўніць кукі для HDrezka',
           en: 'Fill cookie for HDrezka',
           zh: '为HDrezka填充Cookie'
         },
-        my_home_sources_rezka2_fix_stream: {
+        defoz_stream_pro_v2_rezka2_fix_stream: {
           ru: 'Фикс видеопотока для HDrezka',
           uk: 'Фікс відеопотоку для HDrezka',
           be: 'Фікс відэаструменю для HDrezka',
           en: 'Fix video stream for HDrezka',
           zh: '修复 HDrezka 的视频流'
         },
-        my_home_sources_rezka2_prx_ukr: {
+        defoz_stream_pro_v2_rezka2_prx_ukr: {
           ru: 'Прокси-сервер для HDrezka (Укр)',
           uk: 'Проксі-сервер для HDrezka (Укр)',
           be: 'Проксі-сервер для HDrezka (Укр)',
           en: 'Proxy server for HDrezka (Ukr)',
           zh: 'HDrezka 的代理服务器 （乌克兰）'
         },
-        my_home_sources_fancdn_name: {
+        defoz_stream_pro_v2_fancdn_name: {
           ru: 'Логин для FanSerials',
           uk: 'Логін для FanSerials',
           be: 'Лагін для FanSerials',
           en: 'Login for FanSerials',
           zh: 'FanSerials的登录名'
         },
-        my_home_sources_fancdn_password: {
+        defoz_stream_pro_v2_fancdn_password: {
           ru: 'Пароль для FanSerials',
           uk: 'Пароль для FanSerials',
           be: 'Пароль для FanSerials',
           en: 'Password for FanSerials',
           zh: 'FanSerials的密码'
         },
-        my_home_sources_fancdn_cookie: {
+        defoz_stream_pro_v2_fancdn_cookie: {
           ru: 'Куки для FanSerials',
           uk: 'Кукі для FanSerials',
           be: 'Кукі для FanSerials',
           en: 'Cookie for FanSerials',
           zh: 'FanSerials 的 Cookie'
         },
-        my_home_sources_fancdn_fill_cookie: {
+        defoz_stream_pro_v2_fancdn_fill_cookie: {
           ru: 'Заполнить куки для FanSerials',
           uk: 'Заповнити кукі для FanSerials',
           be: 'Запоўніць кукі для FanSerials',
           en: 'Fill cookie for FanSerials',
           zh: '为FanSerials填充Cookie'
         },
-        my_home_sources_fancdn_token: {
+        defoz_stream_pro_v2_fancdn_token: {
           ru: 'Токен для FanCDN',
           uk: 'Токен для FanCDN',
           be: 'Токен для FanCDN',
           en: 'Token for FanCDN',
           zh: 'FanCDN 代币'
         },
-        my_home_sources_authorization_required: {
+        defoz_stream_pro_v2_authorization_required: {
           ru: 'Требуется авторизация',
           uk: 'Потрібна авторизація',
           be: 'Патрабуецца аўтарызацыя',
           en: 'Authorization required',
           zh: '需要授权'
         },
-        my_home_sources_unsupported_mirror: {
+        defoz_stream_pro_v2_unsupported_mirror: {
           ru: 'Неподдерживаемое зеркало',
           uk: 'Непідтримуване дзеркало',
           be: 'Непадтрымоўванае люстэрка',
           en: 'Unsupported mirror',
           zh: '不支持的镜子'
         },
-        my_home_sources_secret_password: {
+        defoz_stream_pro_v2_secret_password: {
           ru: 'Секретный пароль',
           uk: 'Секретний пароль',
           be: 'Сакрэтны пароль',
           en: 'Secret password',
           zh: '秘密密码'
         },
-        my_home_sources_seasons_count: {
+        defoz_stream_pro_v2_seasons_count: {
           ru: 'Сезонов',
           uk: 'Сезонів',
           be: 'Сезонаў',
           en: 'Seasons',
           zh: '季'
         },
-        my_home_sources_episodes_count: {
+        defoz_stream_pro_v2_episodes_count: {
           ru: 'Эпизодов',
           uk: 'Епізодів',
           be: 'Эпізодаў',
           en: 'Episodes',
           zh: '集'
         },
-        my_home_sources_show_more: {
+        defoz_stream_pro_v2_show_more: {
           ru: 'Показать ещё',
           uk: 'Показати ще',
           be: 'Паказаць яшчэ',
           en: 'Show more',
           zh: '展示更多'
         },
-        my_home_sources_server: {
+        defoz_stream_pro_v2_server: {
           ru: 'Сервер',
           uk: 'Сервер',
           be: 'Сервер',
           en: 'Server',
           zh: '服务器'
         },
-        my_home_sources_filmix_param_add_title: {
+        defoz_stream_pro_v2_filmix_param_add_title: {
           ru: 'Добавить ТОКЕН от Filmix',
           uk: 'Додати ТОКЕН від Filmix',
           be: 'Дадаць ТОКЕН ад Filmix',
           en: 'Add TOKEN from Filmix',
           zh: '从 Filmix 添加 TOKEN'
         },
-        my_home_sources_filmix_param_add_descr: {
+        defoz_stream_pro_v2_filmix_param_add_descr: {
           ru: 'Добавьте ТОКЕН для подключения подписки',
           uk: 'Додайте ТОКЕН для підключення передплати',
           be: 'Дадайце ТОКЕН для падлучэння падпіскі',
           en: 'Add a TOKEN to connect a subscription',
           zh: '添加 TOKEN 以连接订阅'
         },
-        my_home_sources_filmix_param_placeholder: {
+        defoz_stream_pro_v2_filmix_param_placeholder: {
           ru: 'Например: nxjekeb57385b..',
           uk: 'Наприклад: nxjekeb57385b..',
           be: 'Напрыклад: nxjekeb57385b..',
           en: 'For example: nxjekeb57385b..',
           zh: '例如： nxjekeb57385b..'
         },
-        my_home_sources_filmix_param_add_device: {
+        defoz_stream_pro_v2_filmix_param_add_device: {
           ru: 'Добавить устройство на Filmix',
           uk: 'Додати пристрій на Filmix',
           be: 'Дадаць прыладу на Filmix',
           en: 'Add Device to Filmix',
           zh: '将设备添加到 Filmix'
         },
-        my_home_sources_filmix_modal_text: {
+        defoz_stream_pro_v2_filmix_modal_text: {
           ru: 'Введите его на странице ' + filmixHost + '/consoles в вашем авторизованном аккаунте!',
           uk: 'Введіть його на сторінці ' + filmixHost + '/consoles у вашому авторизованому обліковому записі!',
           be: 'Увядзіце яго на старонцы ' + filmixHost + '/consoles у вашым аўтарызаваным акаўнце!',
           en: 'Enter it at ' + filmixHost + '/consoles in your authorized account!',
           zh: '在您的授权帐户中的 ' + filmixHost + '/consoles 中输入！'
         },
-        my_home_sources_filmix_modal_wait: {
+        defoz_stream_pro_v2_filmix_modal_wait: {
           ru: 'Ожидаем код',
           uk: 'Очікуємо код',
           be: 'Чакаем код',
           en: 'Waiting for the code',
           zh: '等待代码'
         },
-        my_home_sources_filmix_copy_secuses: {
+        defoz_stream_pro_v2_filmix_copy_secuses: {
           ru: 'Код скопирован в буфер обмена',
           uk: 'Код скопійовано в буфер обміну',
           be: 'Код скапіяваны ў буфер абмену',
           en: 'Code copied to clipboard',
           zh: '代码复制到剪贴板'
         },
-        my_home_sources_filmix_copy_fail: {
+        defoz_stream_pro_v2_filmix_copy_fail: {
           ru: 'Ошибка при копировании',
           uk: 'Помилка при копіюванні',
           be: 'Памылка пры капіяванні',
           en: 'Copy error',
           zh: '复制错误'
         },
-        my_home_sources_filmix_nodevice: {
+        defoz_stream_pro_v2_filmix_nodevice: {
           ru: 'Устройство не авторизовано',
           uk: 'Пристрій не авторизований',
           be: 'Прылада не аўтарызавана',
           en: 'Device not authorized',
           zh: '设备未授权'
         },
-        my_home_sources_filmix_status: {
+        defoz_stream_pro_v2_filmix_status: {
           ru: 'Статус',
           uk: 'Статус',
           be: 'Статус',
           en: 'Status',
           zh: '状态'
         },
-        my_home_sources_voice_subscribe: {
+        defoz_stream_pro_v2_voice_subscribe: {
           ru: 'Подписаться на перевод',
           uk: 'Підписатися на переклад',
           be: 'Падпісацца на пераклад',
           en: 'Subscribe to translation',
           zh: '订阅翻译'
         },
-        my_home_sources_voice_success: {
+        defoz_stream_pro_v2_voice_success: {
           ru: 'Вы успешно подписались',
           uk: 'Ви успішно підписалися',
           be: 'Вы паспяхова падпісаліся',
           en: 'You have successfully subscribed',
           zh: '您已成功订阅'
         },
-        my_home_sources_voice_error: {
+        defoz_stream_pro_v2_voice_error: {
           ru: 'Возникла ошибка',
           uk: 'Виникла помилка',
           be: 'Узнікла памылка',
@@ -7103,12 +7071,12 @@ function kodik(component, _object) {
     }
 
     function resetTemplates() {
-      Lampa.Template.add('my_home_sources', "<div class=\"online selector\">\n        <div class=\"online__body\">\n            <div style=\"position: absolute;left: 0;top: -0.3em;width: 2.4em;height: 2.4em\">\n                <svg style=\"height: 2.4em; width:  2.4em;\" viewBox=\"0 0 128 128\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                    <circle cx=\"64\" cy=\"64\" r=\"56\" stroke=\"white\" stroke-width=\"16\"/>\n                    <path d=\"M90.5 64.3827L50 87.7654L50 41L90.5 64.3827Z\" fill=\"white\"/>\n                </svg>\n            </div>\n            <div class=\"online__title\" style=\"padding-left: 2.1em;\">{title}</div>\n            <div class=\"online__quality\" style=\"padding-left: 3.4em;\">{quality}{info}</div>\n        </div>\n    </div>");
-      Lampa.Template.add('my_home_sources_folder', "<div class=\"online selector\">\n        <div class=\"online__body\">\n            <div style=\"position: absolute;left: 0;top: -0.3em;width: 2.4em;height: 2.4em\">\n                <svg style=\"height: 2.4em; width:  2.4em;\" viewBox=\"0 0 128 112\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                    <rect y=\"20\" width=\"128\" height=\"92\" rx=\"13\" fill=\"white\"/>\n                    <path d=\"M29.9963 8H98.0037C96.0446 3.3021 91.4079 0 86 0H42C36.5921 0 31.9555 3.3021 29.9963 8Z\" fill=\"white\" fill-opacity=\"0.23\"/>\n                    <rect x=\"11\" y=\"8\" width=\"106\" height=\"76\" rx=\"13\" fill=\"white\" fill-opacity=\"0.51\"/>\n                </svg>\n            </div>\n            <div class=\"online__title\" style=\"padding-left: 2.1em;\">{title}</div>\n            <div class=\"online__quality\" style=\"padding-left: 3.4em;\">{quality}{info}</div>\n        </div>\n    </div>");
+      Lampa.Template.add('defoz_stream_pro_v2', "<div class=\"online selector\">\n        <div class=\"online__body\">\n            <div style=\"position: absolute;left: 0;top: -0.3em;width: 2.4em;height: 2.4em\">\n                <svg style=\"height: 2.4em; width:  2.4em;\" viewBox=\"0 0 128 128\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                    <circle cx=\"64\" cy=\"64\" r=\"56\" stroke=\"white\" stroke-width=\"16\"/>\n                    <path d=\"M90.5 64.3827L50 87.7654L50 41L90.5 64.3827Z\" fill=\"white\"/>\n                </svg>\n            </div>\n            <div class=\"online__title\" style=\"padding-left: 2.1em;\">{title}</div>\n            <div class=\"online__quality\" style=\"padding-left: 3.4em;\">{quality}{info}</div>\n        </div>\n    </div>");
+      Lampa.Template.add('defoz_stream_pro_v2_folder', "<div class=\"online selector\">\n        <div class=\"online__body\">\n            <div style=\"position: absolute;left: 0;top: -0.3em;width: 2.4em;height: 2.4em\">\n                <svg style=\"height: 2.4em; width:  2.4em;\" viewBox=\"0 0 128 112\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                    <rect y=\"20\" width=\"128\" height=\"92\" rx=\"13\" fill=\"white\"/>\n                    <path d=\"M29.9963 8H98.0037C96.0446 3.3021 91.4079 0 86 0H42C36.5921 0 31.9555 3.3021 29.9963 8Z\" fill=\"white\" fill-opacity=\"0.23\"/>\n                    <rect x=\"11\" y=\"8\" width=\"106\" height=\"76\" rx=\"13\" fill=\"white\" fill-opacity=\"0.51\"/>\n                </svg>\n            </div>\n            <div class=\"online__title\" style=\"padding-left: 2.1em;\">{title}</div>\n            <div class=\"online__quality\" style=\"padding-left: 3.4em;\">{quality}{info}</div>\n        </div>\n    </div>");
     }
 
     function checkMyIp(onComplite) {
-      if (Lampa.Storage.field('my_home_sources_proxy_find_ip') !== true) {
+      if (Lampa.Storage.field('defoz_stream_pro_v2_proxy_find_ip') !== true) {
         onComplite();
         return;
       }
@@ -7171,11 +7139,11 @@ function kodik(component, _object) {
         checkCurrentFanserialsHost(function () {
           online_loading = false;
           resetTemplates();
-          Lampa.Component.add('my_home_sources', component);
+          Lampa.Component.add('defoz_stream_pro_v2', component);
           Lampa.Activity.push({
             url: '',
-            title: Lampa.Lang.translate('my_home_sources_title_full'),
-            component: 'my_home_sources',
+            title: Lampa.Lang.translate('defoz_stream_pro_v2_title_full'),
+            component: 'defoz_stream_pro_v2',
             search: object.title,
             search_one: object.title,
             search_two: object.original_title,
@@ -7188,18 +7156,18 @@ function kodik(component, _object) {
 
     function initMain() {
       // нужна заглушка, а то при страте лампы говорит пусто
-      Lampa.Component.add('my_home_sources', component); //то же самое
+      Lampa.Component.add('defoz_stream_pro_v2', component); //то же самое
 
       resetTemplates();
       var manifest = {
         type: 'video',
         version: mod_version,
-        name: 'Defoz Stream - ' + mod_version,
-        description: 'Мощный агрегатор онлайн-балансеров (Alloha, Rezka, Kodik, Filmix)',
-        component: 'my_home_sources',
+        name: '★ Defoz Stream Premium ★',
+        description: 'Премиум агрегатор (Rezka, Filmix, Alloha, Kodik) через ваш прокси',
+        component: 'defoz_stream_pro_v2',
         onContextMenu: function onContextMenu(object) {
           return {
-            name: Lampa.Lang.translate('my_home_sources_watch'),
+            name: Lampa.Lang.translate('defoz_stream_pro_v2_watch'),
             description: ''
           };
         },
@@ -7211,10 +7179,10 @@ function kodik(component, _object) {
       Lampa.Manifest.plugins = manifest;
       
       // Кастомный стиль для нашей кнопки
-      if (!$('#my_home_sources_style').length) {
+      if (!$('#defoz_stream_pro_v2_style').length) {
           $('head').append(`
-          <style id="my_home_sources_style">
-          .view--my_home_sources {
+          <style id="defoz_stream_pro_v2_style">
+          .view--defoz_stream_pro_v2 {
               background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
               border-radius: 10px !important;
               box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4) !important;
@@ -7258,12 +7226,12 @@ function kodik(component, _object) {
 
 // ================= КОНЕЦ БАЛАНСЕРА: LUMEX =================
 
-          .view--my_home_sources:focus, .view--my_home_sources.focus, .view--my_home_sources:hover {
+          .view--defoz_stream_pro_v2:focus, .view--defoz_stream_pro_v2.focus, .view--defoz_stream_pro_v2:hover {
               transform: scale(1.05) !important;
               box-shadow: 0 8px 25px rgba(118, 75, 162, 0.6) !important;
               background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
           }
-          .view--my_home_sources svg {
+          .view--defoz_stream_pro_v2 svg {
               fill: white !important;
               filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
           }
@@ -7271,7 +7239,7 @@ function kodik(component, _object) {
           `);
       }
 
-      var button = "<div class=\"full-start__button selector view--my_home_sources\" data-subtitle=\"my_home_sources \" + mod_version + \"\" style=\"background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4); color: white !important; font-weight: 600 !important; transition: transform 0.3s ease;\">\n        <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"white\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><polygon points=\"10 8 16 12 10 16 10 8\"></polygon></svg>\n\n        <span style=\"color: white !important;\">#{my_home_sources_title}</span>\n        </div>";
+      var button = "<div class=\"full-start__button selector view--defoz_stream_pro_v2\" data-subtitle=\"defoz_stream_pro_v2 \" + mod_version + \"\" style=\"background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4); color: white !important; font-weight: 600 !important; transition: transform 0.3s ease;\">\n        <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"white\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><polygon points=\"10 8 16 12 10 16 10 8\"></polygon></svg>\n\n        <span style=\"color: white !important;\">#{defoz_stream_pro_v2_title}</span>\n        </div>";
       Lampa.Listener.follow('full', function (e) {
         if (e.type == 'complite') {
           var btn = $(Lampa.Lang.translate(button));
@@ -7283,14 +7251,14 @@ function kodik(component, _object) {
         }
       });
 
-      if (Lampa.Storage.get('my_home_sources_use_stream_proxy', '') === '') {
+      if (Lampa.Storage.get('defoz_stream_pro_v2_use_stream_proxy', '') === '') {
         $.ajax({
           url: (window.location.protocol === 'https:' ? 'https://' : 'http://') + 'ipwho.is/?fields=ip,country_code',
           jsonp: 'callback',
           dataType: 'jsonp'
         }).done(function (json) {
           if (json && json.country_code) {
-            Lampa.Storage.set('my_home_sources_use_stream_proxy', '' + (json.country_code === 'UA'));
+            Lampa.Storage.set('defoz_stream_pro_v2_use_stream_proxy', '' + (json.country_code === 'UA'));
           }
         });
       }
@@ -7328,13 +7296,13 @@ function kodik(component, _object) {
 
     function showStatus() {
       var status = Lampa.Storage.get("filmix_status", '{}');
-      var info = Lampa.Lang.translate('my_home_sources_filmix_nodevice');
+      var info = Lampa.Lang.translate('defoz_stream_pro_v2_filmix_nodevice');
 
       if (status.login) {
         if (status.is_pro) info = status.login + ' - PRO ' + Lampa.Lang.translate('filter_rating_to') + ' - ' + status.pro_date;else if (status.is_pro_plus) info = status.login + ' - PRO_PLUS ' + Lampa.Lang.translate('filter_rating_to') + ' - ' + status.pro_date;else info = status.login + ' - NO PRO';
       }
 
-      var field = $(Lampa.Lang.translate("\n        <div class=\"settings-param\" data-name=\"filmix_status\" data-static=\"true\">\n            <div class=\"settings-param__name\">#{my_home_sources_filmix_status}</div>\n            <div class=\"settings-param__value\">".concat(info, "</div>\n        </div>")));
+      var field = $(Lampa.Lang.translate("\n        <div class=\"settings-param\" data-name=\"filmix_status\" data-static=\"true\">\n            <div class=\"settings-param__name\">#{defoz_stream_pro_v2_filmix_status}</div>\n            <div class=\"settings-param__value\">".concat(info, "</div>\n        </div>")));
       $('.settings [data-name="filmix_status"]').remove();
       $('.settings [data-name="filmix_add"]').after(field);
     }
@@ -7369,7 +7337,7 @@ function kodik(component, _object) {
 
     function initFilmix() {
       Lampa.Params.select('filmix_token', '', '');
-      Lampa.Template.add('settings_filmix', "<div>\n        <div class=\"settings-param selector\" data-name=\"filmix_token\" data-type=\"input\" placeholder=\"#{my_home_sources_filmix_param_placeholder}\">\n            <div class=\"settings-param__name\">#{my_home_sources_filmix_param_add_title}</div>\n            <div class=\"settings-param__value\"></div>\n            <div class=\"settings-param__descr\">#{my_home_sources_filmix_param_add_descr}</div>\n        </div>\n        <div class=\"settings-param selector\" data-name=\"filmix_add\" data-static=\"true\">\n            <div class=\"settings-param__name\">#{my_home_sources_filmix_param_add_device}</div>\n        </div>\n    </div>");
+      Lampa.Template.add('settings_filmix', "<div>\n        <div class=\"settings-param selector\" data-name=\"filmix_token\" data-type=\"input\" placeholder=\"#{defoz_stream_pro_v2_filmix_param_placeholder}\">\n            <div class=\"settings-param__name\">#{defoz_stream_pro_v2_filmix_param_add_title}</div>\n            <div class=\"settings-param__value\"></div>\n            <div class=\"settings-param__descr\">#{defoz_stream_pro_v2_filmix_param_add_descr}</div>\n        </div>\n        <div class=\"settings-param selector\" data-name=\"filmix_add\" data-static=\"true\">\n            <div class=\"settings-param__name\">#{defoz_stream_pro_v2_filmix_param_add_device}</div>\n        </div>\n    </div>");
       Lampa.Storage.listener.follow('change', function (e) {
         if (e.name == 'filmix_token') {
           window.mod_filmix = {
@@ -7399,7 +7367,7 @@ function kodik(component, _object) {
               filmix_prox_enc += 'param/User-Agent=' + encodeURIComponent(Utils.filmixUserAgent()) + '/';
             }
 
-            var modal = $('<div><div class="broadcast__text">' + Lampa.Lang.translate('my_home_sources_filmix_modal_text') + '</div><div class="broadcast__device selector" style="text-align: center">' + Lampa.Lang.translate('my_home_sources_filmix_modal_wait') + '...</div><br><div class="broadcast__scan"><div></div></div></div></div>');
+            var modal = $('<div><div class="broadcast__text">' + Lampa.Lang.translate('defoz_stream_pro_v2_filmix_modal_text') + '</div><div class="broadcast__device selector" style="text-align: center">' + Lampa.Lang.translate('defoz_stream_pro_v2_filmix_modal_wait') + '...</div><br><div class="broadcast__scan"><div></div></div></div></div>');
             Lampa.Modal.open({
               title: '',
               html: modal,
@@ -7410,9 +7378,9 @@ function kodik(component, _object) {
               },
               onSelect: function onSelect() {
                 Lampa.Utils.copyTextToClipboard(user_code, function () {
-                  Lampa.Noty.show(Lampa.Lang.translate('my_home_sources_filmix_copy_secuses'));
+                  Lampa.Noty.show(Lampa.Lang.translate('defoz_stream_pro_v2_filmix_copy_secuses'));
                 }, function () {
-                  Lampa.Noty.show(Lampa.Lang.translate('my_home_sources_filmix_copy_fail'));
+                  Lampa.Noty.show(Lampa.Lang.translate('defoz_stream_pro_v2_filmix_copy_fail'));
                 });
               }
             });
@@ -7456,14 +7424,14 @@ function kodik(component, _object) {
     function rezka2Login(success, error) {
       var host = Utils.rezka2Mirror();
       var url = host + '/ajax/login/';
-      var postdata = 'login_name=' + encodeURIComponent(Lampa.Storage.get('my_home_sources_rezka2_name', ''));
-      postdata += '&login_password=' + encodeURIComponent(Lampa.Storage.get('my_home_sources_rezka2_password', ''));
+      var postdata = 'login_name=' + encodeURIComponent(Lampa.Storage.get('defoz_stream_pro_v2_rezka2_name', ''));
+      postdata += '&login_password=' + encodeURIComponent(Lampa.Storage.get('defoz_stream_pro_v2_rezka2_password', ''));
       postdata += '&login_not_save=0';
       network.clear();
       network.timeout(8000);
       network.silent(url, function (json) {
         if (json && (json.success || json.message == 'Уже авторизован на сайте. Необходимо обновить страницу!')) {
-          Lampa.Storage.set('my_home_sources_rezka2_status', 'true');
+          Lampa.Storage.set('defoz_stream_pro_v2_rezka2_status', 'true');
           network.clear();
           network.timeout(8000);
           network.silent(host + '/', function (str) {
@@ -7479,7 +7447,7 @@ function kodik(component, _object) {
             var verify_form = str.match(/<span>MIRROR<\/span>.*<button type="submit" onclick="\$\.cookie(\([^)]*\))/);
 
             if (verify_form) {
-              Lampa.Noty.show(Lampa.Lang.translate('my_home_sources_unsupported_mirror') + ' HDrezka');
+              Lampa.Noty.show(Lampa.Lang.translate('defoz_stream_pro_v2_unsupported_mirror') + ' HDrezka');
               rezka2Logout(error, error);
               return;
             }
@@ -7492,7 +7460,7 @@ function kodik(component, _object) {
             withCredentials: true
           });
         } else {
-          Lampa.Storage.set('my_home_sources_rezka2_status', 'false');
+          Lampa.Storage.set('defoz_stream_pro_v2_rezka2_status', 'false');
           if (json && json.message) Lampa.Noty.show(json.message);
           if (error) error();
         }
@@ -7509,10 +7477,10 @@ function kodik(component, _object) {
       network.clear();
       network.timeout(8000);
       network.silent(url, function (str) {
-        Lampa.Storage.set('my_home_sources_rezka2_status', 'false');
+        Lampa.Storage.set('defoz_stream_pro_v2_rezka2_status', 'false');
         if (success) success();
       }, function (a, c) {
-        Lampa.Storage.set('my_home_sources_rezka2_status', 'false');
+        Lampa.Storage.set('defoz_stream_pro_v2_rezka2_status', 'false');
         Lampa.Noty.show(network.errorDecode(a, c));
         if (error) error();
       }, false, {
@@ -7525,7 +7493,7 @@ function kodik(component, _object) {
       var prox = Utils.proxy('rezka2');
       var prox_enc = '';
       var returnHeaders = androidHeaders;
-      var proxy_mirror = Lampa.Storage.field('my_home_sources_proxy_rezka2_mirror') === true;
+      var proxy_mirror = Lampa.Storage.field('defoz_stream_pro_v2_proxy_rezka2_mirror') === true;
       var host = prox && !proxy_mirror ? 'https://rezka.ag' : Utils.rezka2Mirror();
       if (!prox && !returnHeaders) prox = Utils.proxy('cookie');
 
@@ -7546,8 +7514,8 @@ function kodik(component, _object) {
       }
 
       var url = host + '/ajax/login/';
-      var postdata = 'login_name=' + encodeURIComponent(Lampa.Storage.get('my_home_sources_rezka2_name', ''));
-      postdata += '&login_password=' + encodeURIComponent(Lampa.Storage.get('my_home_sources_rezka2_password', ''));
+      var postdata = 'login_name=' + encodeURIComponent(Lampa.Storage.get('defoz_stream_pro_v2_rezka2_name', ''));
+      postdata += '&login_password=' + encodeURIComponent(Lampa.Storage.get('defoz_stream_pro_v2_rezka2_password', ''));
       postdata += '&login_not_save=0';
       network.clear();
       network.timeout(8000);
@@ -7586,7 +7554,7 @@ function kodik(component, _object) {
         }
 
         if (cookie) {
-          Lampa.Storage.set('my_home_sources_rezka2_cookie', cookie);
+          Lampa.Storage.set('defoz_stream_pro_v2_rezka2_cookie', cookie);
           if (cookie.indexOf('PHPSESSID=') == -1) cookie = 'PHPSESSID=' + (sid || Utils.randomId(26)) + (cookie ? '; ' + cookie : '');
           var prox_enc2 = prox_enc;
 
@@ -7628,7 +7596,7 @@ function kodik(component, _object) {
               }
 
               cookie = _cookies.join('; ');
-              if (cookie) Lampa.Storage.set('my_home_sources_rezka2_cookie', cookie);
+              if (cookie) Lampa.Storage.set('defoz_stream_pro_v2_rezka2_cookie', cookie);
             }
 
             var verify_form = body.match(/<span>MIRROR<\/span>.*<button type="submit" onclick="\$\.cookie(\([^)]*\))/);
@@ -7649,7 +7617,7 @@ function kodik(component, _object) {
                 }
 
                 cookie = _cookies2.join('; ');
-                if (cookie) Lampa.Storage.set('my_home_sources_rezka2_cookie', cookie);
+                if (cookie) Lampa.Storage.set('defoz_stream_pro_v2_rezka2_cookie', cookie);
                 if (cookie.indexOf('PHPSESSID=') == -1) cookie = 'PHPSESSID=' + (sid || Utils.randomId(26)) + (cookie ? '; ' + cookie : '');
                 var prox_enc3 = prox_enc;
 
@@ -7675,8 +7643,8 @@ function kodik(component, _object) {
                   var verify_form = body.match(/<span>MIRROR<\/span>.*<button type="submit" onclick="\$\.cookie(\([^)]*\))/);
 
                   if (verify_form) {
-                    Lampa.Storage.set('my_home_sources_rezka2_cookie', '');
-                    Lampa.Noty.show(Lampa.Lang.translate('my_home_sources_unsupported_mirror') + ' HDrezka');
+                    Lampa.Storage.set('defoz_stream_pro_v2_rezka2_cookie', '');
+                    Lampa.Noty.show(Lampa.Lang.translate('defoz_stream_pro_v2_unsupported_mirror') + ' HDrezka');
                     if (error) error();
                     return;
                   }
@@ -7700,7 +7668,7 @@ function kodik(component, _object) {
                     }
 
                     cookie = _cookies3.join('; ');
-                    if (cookie) Lampa.Storage.set('my_home_sources_rezka2_cookie', cookie);
+                    if (cookie) Lampa.Storage.set('defoz_stream_pro_v2_rezka2_cookie', cookie);
                   }
 
                   if (success) success();
@@ -7758,8 +7726,8 @@ function kodik(component, _object) {
       }
 
       var url = host + '/';
-      var postdata = 'login_name=' + encodeURIComponent(Lampa.Storage.get('my_home_sources_fancdn_name', ''));
-      postdata += '&login_password=' + encodeURIComponent(Lampa.Storage.get('my_home_sources_fancdn_password', ''));
+      var postdata = 'login_name=' + encodeURIComponent(Lampa.Storage.get('defoz_stream_pro_v2_fancdn_name', ''));
+      postdata += '&login_password=' + encodeURIComponent(Lampa.Storage.get('defoz_stream_pro_v2_fancdn_password', ''));
       postdata += '&login=submit';
       network.clear();
       network.timeout(8000);
@@ -7799,7 +7767,7 @@ function kodik(component, _object) {
         }
 
         if (cookie) {
-          Lampa.Storage.set('my_home_sources_fancdn_cookie', cookie);
+          Lampa.Storage.set('defoz_stream_pro_v2_fancdn_cookie', cookie);
           if (cookie.indexOf('PHPSESSID=') == -1) cookie = 'PHPSESSID=' + (sid || Utils.randomHex(32)) + (cookie ? '; ' + cookie : '');
           var prox_enc2 = prox_enc;
 
@@ -7840,7 +7808,7 @@ function kodik(component, _object) {
               }
 
               cookie = _cookies4.join('; ');
-              if (cookie) Lampa.Storage.set('my_home_sources_fancdn_cookie', cookie);
+              if (cookie) Lampa.Storage.set('defoz_stream_pro_v2_fancdn_cookie', cookie);
             }
 
             if (success) success();
@@ -7866,8 +7834,8 @@ function kodik(component, _object) {
 
 
     function addSettingsOnlineMod() {
-      if (Lampa.Settings.main && Lampa.Settings.main() && !Lampa.Settings.main().render().find('[data-component="my_home_sources"]').length) {
-        var field = $(Lampa.Lang.translate("<div class=\"settings-folder selector\" data-component=\"my_home_sources\">\n            <div class=\"settings-folder__icon\">\n                <svg height=\"260\" viewBox=\"0 0 244 260\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                <path d=\"M242,88v170H10V88h41l-38,38h37.1l38-38h38.4l-38,38h38.4l38-38h38.3l-38,38H204L242,88L242,88z M228.9,2l8,37.7l0,0 L191.2,10L228.9,2z M160.6,56l-45.8-29.7l38-8.1l45.8,29.7L160.6,56z M84.5,72.1L38.8,42.4l38-8.1l45.8,29.7L84.5,72.1z M10,88 L2,50.2L47.8,80L10,88z\" fill=\"white\"/>\n                </svg>\n            </div>\n            <div class=\"settings-folder__name\">#{my_home_sources_title_full}</div>\n            <div class=\"defoz-badge\">Defoz Stream v2.2.0 (Premium)</div>\n        </div>"));
+      if (Lampa.Settings.main && Lampa.Settings.main() && !Lampa.Settings.main().render().find('[data-component="defoz_stream_pro_v2"]').length) {
+        var field = $(Lampa.Lang.translate("<div class=\"settings-folder selector\" data-component=\"defoz_stream_pro_v2\">\n            <div class=\"settings-folder__icon\">\n                <svg height=\"260\" viewBox=\"0 0 244 260\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                <path d=\"M242,88v170H10V88h41l-38,38h37.1l38-38h38.4l-38,38h38.4l38-38h38.3l-38,38H204L242,88L242,88z M228.9,2l8,37.7l0,0 L191.2,10L228.9,2z M160.6,56l-45.8-29.7l38-8.1l45.8,29.7L160.6,56z M84.5,72.1L38.8,42.4l38-8.1l45.8,29.7L84.5,72.1z M10,88 L2,50.2L47.8,80L10,88z\" fill=\"white\"/>\n                </svg>\n            </div>\n            <div class=\"settings-folder__name\">#{defoz_stream_pro_v2_title_full}</div>\n            <div class=\"defoz-badge\">Defoz Stream v2.2.0 (Premium)</div>\n        </div>"));
         Lampa.Settings.main().render().find('[data-component="more"]').after(field);
         Lampa.Settings.main().update();
       }
@@ -7877,19 +7845,19 @@ function kodik(component, _object) {
       var template = "<div>";
 
       // Балансеры
-      template += "\n        <div class=\"settings-param selector\" data-name=\"my_home_sources_proxy_alloha\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{my_home_sources_proxy_balanser} Alloha</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
-      template += "\n        <div class=\"settings-param selector\" data-name=\"my_home_sources_proxy_anilibria\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{my_home_sources_proxy_balanser} AniLibria</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
-      template += "\n        <div class=\"settings-param selector\" data-name=\"my_home_sources_proxy_filmix\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{my_home_sources_proxy_balanser} Filmix</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
-      template += "\n        <div class=\"settings-param selector\" data-name=\"my_home_sources_proxy_rezka2\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{my_home_sources_proxy_balanser} HDrezka</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
-      template += "\n        <div class=\"settings-param selector\" data-name=\"my_home_sources_proxy_kodik\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{my_home_sources_proxy_balanser} Kodik</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
+      template += "\n        <div class=\"settings-param selector\" data-name=\"defoz_stream_pro_v2_proxy_alloha\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{defoz_stream_pro_v2_proxy_balanser} Alloha</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
+      template += "\n        <div class=\"settings-param selector\" data-name=\"defoz_stream_pro_v2_proxy_anilibria\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{defoz_stream_pro_v2_proxy_balanser} AniLibria</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
+      template += "\n        <div class=\"settings-param selector\" data-name=\"defoz_stream_pro_v2_proxy_filmix\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{defoz_stream_pro_v2_proxy_balanser} Filmix</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
+      template += "\n        <div class=\"settings-param selector\" data-name=\"defoz_stream_pro_v2_proxy_rezka2\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{defoz_stream_pro_v2_proxy_balanser} HDrezka</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
+      template += "\n        <div class=\"settings-param selector\" data-name=\"defoz_stream_pro_v2_proxy_kodik\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{defoz_stream_pro_v2_proxy_balanser} Kodik</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
 
-      template += "\n        <div class=\"settings-param selector\" data-name=\"my_home_sources_use_stream_proxy\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{my_home_sources_use_stream_proxy}</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
-      template += "\n        <div class=\"settings-param selector\" data-name=\"my_home_sources_prefer_http\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{my_home_sources_prefer_http}</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
-      template += "\n        <div class=\"settings-param selector\" data-name=\"my_home_sources_prefer_mp4\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{my_home_sources_prefer_mp4}</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
-      template += "\n        <div class=\"settings-param selector\" data-name=\"my_home_sources_collaps_lampa_player\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{my_home_sources_collaps_lampa_player}</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
+      template += "\n        <div class=\"settings-param selector\" data-name=\"defoz_stream_pro_v2_use_stream_proxy\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{defoz_stream_pro_v2_use_stream_proxy}</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
+      template += "\n        <div class=\"settings-param selector\" data-name=\"defoz_stream_pro_v2_prefer_http\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{defoz_stream_pro_v2_prefer_http}</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
+      template += "\n        <div class=\"settings-param selector\" data-name=\"defoz_stream_pro_v2_prefer_mp4\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{defoz_stream_pro_v2_prefer_mp4}</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
+      template += "\n        <div class=\"settings-param selector\" data-name=\"defoz_stream_pro_v2_collaps_lampa_player\" data-type=\"toggle\">\n            <div class=\"settings-param__name\">#{defoz_stream_pro_v2_collaps_lampa_player}</div>\n            <div class=\"settings-param__value\"></div>\n        </div>";
 
       template += "\n    </div>";
-      Lampa.Template.add('settings_my_home_sources', template);
+      Lampa.Template.add('settings_defoz_stream_pro_v2', template);
       
       if (window.appready) addSettingsOnlineMod();
       else {
