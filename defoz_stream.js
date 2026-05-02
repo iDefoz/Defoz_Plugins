@@ -5351,6 +5351,7 @@
 
     this.search = function () {
       this.activity.loader(true);
+      this.filter({ source: filter_sources }, { source: 0 });
       
       this.reset();
       this.find();
@@ -6575,7 +6576,7 @@
 
   function initLang() {
     Lampa.Lang.add({
-        defoz_stream_pro_v2_title: { ru: 'Смотреть Онлайн (DEFOZ)' },
+        defoz_stream_pro_v2_title: { ru: 'Defoz Stream'  },
         defoz_stream_pro_v2_title_full: { ru: '★ DEFOZ STREAM PRO ★' },
         defoz_stream_pro_v2_proxy_balanser: { ru: 'Проксировать' },
         defoz_stream_pro_v2_use_stream_proxy: { ru: 'Проксировать видео (HLS/MP4)' },
@@ -6697,8 +6698,7 @@
         en: 'Defoz Stream',
         zh: '在线的'
       },
-      defoz_stream_pro_v2_title_full: {
-        ru: 'Defoz Stream',
+      defoz_stream_pro_v2_title_full: { ru: '★ DEFOZ STREAM PRO ★',
         uk: 'Defoz Stream',
         be: 'Defoz Stream',
         en: 'Defoz Stream',
