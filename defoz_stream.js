@@ -4014,7 +4014,7 @@
     var object = _object;
     var select_title = '';
     var prox = component.proxy('anilibria');
-    var embed = 'https://api.anilibria.top/v3/';
+    var embed = 'https://api.anilibria.tv/v3/';
     var filter_items = {};
     var choice = {
       season: 0,
@@ -5351,11 +5351,7 @@
 
     this.search = function () {
       this.activity.loader(true);
-      this.filter({
-        source: filter_sources
-      }, {
-        source: 0
-      });
+      
       this.reset();
       this.find();
     };
@@ -6698,7 +6694,7 @@
         ru: 'Онлайн',
         uk: 'Онлайн',
         be: 'Анлайн',
-        en: 'Online',
+        en: 'Defoz Stream',
         zh: '在线的'
       },
       defoz_stream_pro_v2_title_full: {
@@ -6736,11 +6732,10 @@
         en: 'Alternative proxy',
         zh: '备用代理'
       },
-      defoz_stream_pro_v2_proxy_balanser: {
-        ru: 'Обход блокировки для',
-        uk: 'Обхід блокування для',
-        be: 'Праксіраваць',
-        en: 'Proxy',
+      defoz_stream_pro_v2_proxy_balanser: { ru: 'Балансер',
+        uk: 'Балансер',
+        be: 'Балансер',
+        en: 'Balancer',
         zh: '代理'
       },
       defoz_stream_pro_v2_proxy_kp: {
