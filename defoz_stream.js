@@ -1245,7 +1245,7 @@ function rezka2(component, _object) {
           }) : []
         };
         if (!filter_items.season[choice.season]) choice.season = 0;
-        if (!filter_items.voice[choice.voice]) choice.voice = 0; if(filter_items.voice[choice.voice] === '') filter_items.voice[choice.voice] = 'По умолчанию';
+        if (!filter_items.voice[choice.voice]) choice.voice = 0; if(filter_items.voice[choice.voice] === '' || filter_items.voice[choice.voice] === undefined) filter_items.voice[choice.voice] = 'По умолчанию';
 
         if (choice.voice_name) {
           var inx = filter_items.voice.indexOf(choice.voice_name);
@@ -1448,11 +1448,11 @@ function rezka2(component, _object) {
         var filtred = [];
 
         if (extract.is_series) {
-          var season_name = filter_items.season[choice.season];
-          var season_id;
-          extract.season.forEach(function (season) {
-            if (season.name == season_name) season_id = season.id;
-          });
+                    var season_name = filter_items.season[choice.season];
+          var season_id = filter_items.season_id[choice.season];
+          if (!season_id && extract.season.length > 0) {
+              season_id = extract.season[0].id;
+          }
           var voice = filter_items.voice[choice.voice];
           extract.episode.forEach(function (episode) {
             if (episode.season_id == season_id) {
@@ -2483,7 +2483,7 @@ function rezka2(component, _object) {
           });
         }
 
-        if (!filter_items.voice[choice.voice]) choice.voice = 0; if(filter_items.voice[choice.voice] === '') filter_items.voice[choice.voice] = 'По умолчанию';
+        if (!filter_items.voice[choice.voice]) choice.voice = 0; if(filter_items.voice[choice.voice] === '' || filter_items.voice[choice.voice] === undefined) filter_items.voice[choice.voice] = 'По умолчанию';
 
         if (choice.voice_name) {
           var inx = filter_items.voice.indexOf(choice.voice_name);
@@ -2893,7 +2893,7 @@ function videoseed(component, _object) {
           });
         }
 
-        if (!filter_items.voice[choice.voice]) choice.voice = 0; if(filter_items.voice[choice.voice] === '') filter_items.voice[choice.voice] = 'По умолчанию';
+        if (!filter_items.voice[choice.voice]) choice.voice = 0; if(filter_items.voice[choice.voice] === '' || filter_items.voice[choice.voice] === undefined) filter_items.voice[choice.voice] = 'По умолчанию';
 
         if (choice.voice_name) {
           var inx = filter_items.voice.indexOf(choice.voice_name);
@@ -3364,7 +3364,7 @@ function alloha(component, _object) {
           }
         }
 
-        if (!filter_items.voice[choice.voice]) choice.voice = 0; if(filter_items.voice[choice.voice] === '') filter_items.voice[choice.voice] = 'По умолчанию';
+        if (!filter_items.voice[choice.voice]) choice.voice = 0; if(filter_items.voice[choice.voice] === '' || filter_items.voice[choice.voice] === undefined) filter_items.voice[choice.voice] = 'По умолчанию';
 
         if (choice.voice_name) {
           var inx = filter_items.voice.indexOf(choice.voice_name);
@@ -3384,7 +3384,7 @@ function alloha(component, _object) {
       function filtred() {
         var filtred = [];
 
-        if (extract.pl.type === 'serial') {
+                if (extract.pl && extract.pl.all && (extract.pl.type === 'serial' || Object.keys(extract.pl.all).length > 1)) {
           if (filter_items.season[choice.season] && filter_items.voice_info[choice.voice]) {
             var s_num = filter_items.season_num[choice.season];
             var v_id = filter_items.voice_info[choice.voice].id;
@@ -3759,7 +3759,7 @@ function cdnvideohub(component, _object) {
         if (!filter_items.season[choice.season]) choice.season = 0;
         var s = extract.seasons[choice.season];
         if (s) filter_items.voice = s.voices;
-        if (!filter_items.voice[choice.voice]) choice.voice = 0; if(filter_items.voice[choice.voice] === '') filter_items.voice[choice.voice] = 'По умолчанию';
+        if (!filter_items.voice[choice.voice]) choice.voice = 0; if(filter_items.voice[choice.voice] === '' || filter_items.voice[choice.voice] === undefined) filter_items.voice[choice.voice] = 'По умолчанию';
 
         if (choice.voice_name) {
           var inx = filter_items.voice.indexOf(choice.voice_name);
@@ -4788,7 +4788,7 @@ function kodik(component, _object) {
           });
         }
 
-        if (!filter_items.voice[choice.voice]) choice.voice = 0; if(filter_items.voice[choice.voice] === '') filter_items.voice[choice.voice] = 'По умолчанию';
+        if (!filter_items.voice[choice.voice]) choice.voice = 0; if(filter_items.voice[choice.voice] === '' || filter_items.voice[choice.voice] === undefined) filter_items.voice[choice.voice] = 'По умолчанию';
 
         if (choice.voice_name) {
           var inx = filter_items.voice.indexOf(choice.voice_name);
